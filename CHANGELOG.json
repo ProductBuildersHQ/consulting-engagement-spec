@@ -1,0 +1,71 @@
+{
+  "irVersion": "1.0",
+  "project": "consulting-engagement-spec",
+  "repository": "https://github.com/ProductBuildersHQ/consulting-engagement-spec",
+  "versioning": "semver",
+  "commitConvention": "conventional",
+  "maintainers": [
+    "grokify"
+  ],
+  "releases": [
+    {
+      "version": "v0.1.0",
+      "date": "2026-11-11",
+      "highlights": [
+        {
+          "description": "A Go-first model of a consulting agreement (a proposal or statement of work) with a generated, embedded JSON Schema"
+        },
+        {
+          "description": "20 lint rules for what a schema cannot check: unique IDs, references, dates, commercials, lifecycle, and gaps such as nothing out of scope or no client responsibilities"
+        },
+        {
+          "description": "Deterministic rendering to Markdown, and export to DOCX and PDF through Pandoc, with a printed signature block"
+        },
+        {
+          "description": "A content digest printed on every document that ties a signed PDF to its exact source"
+        }
+      ],
+      "added": [
+        {
+          "description": "`pkg/engagement`: the `Agreement` document with parties, people, background, objectives, scope with included and excluded items, phases, deliverables with acceptance criteria, milestones, responsibilities, governance, assumptions, risks, success criteria, acceptance, commercials, change control, terms, open questions, and signatures"
+        },
+        {
+          "description": "Enumerations with `All…`, `Valid`, and `Label` helpers: kind (`proposal`, `statement_of_work`), status, party role, commercial model (`pro_bono`, `fixed_fee`, `time_and_materials`, `retainer`), and signature method"
+        },
+        {
+          "description": "The `agreement` JSON Schema, generated from the Go types by `cmd/generate-schema` and embedded in `schema` with `Names`, `Get`, `Compiled`, and `Validate`"
+        },
+        {
+          "description": "`pkg/engagementio`: YAML and JSON loading with size limits, schema validation, and strict decoding; canonical formatting; and `ContentDigest`, a SHA-256 of the agreed content that ignores status and signing records"
+        },
+        {
+          "description": "`pkg/lint`: 20 rules in two severities, with findings in a fixed order"
+        },
+        {
+          "description": "`pkg/render`: Markdown in Pandoc and GitHub flavors, with a document information table, numbered sections, a page footer in PDF output, and signature blocks"
+        },
+        {
+          "description": "`pkg/pandoc`: the Pandoc command for DOCX and PDF, with timestamps pinned to the agreement's date, LuaLaTeX as the default PDF engine, and `NormalizeZip` for reproducible DOCX files"
+        },
+        {
+          "description": "The `cespec` CLI: `validate`, `lint`, `fmt`, `digest`, `render`, `export`, and `schema`"
+        }
+      ],
+      "tests": [
+        {
+          "description": "A fictional pro bono example with golden Markdown in both flavors, a test for every lint rule, schema drift and determinism tests, and CLI tests"
+        }
+      ],
+      "documentation": [
+        {
+          "description": "PRD, TRD, PLAN, and ROADMAP for the initiative, a README, and contributor guidance"
+        }
+      ],
+      "infrastructure": [
+        {
+          "description": "CI, lint, and CodeQL workflows, and golangci-lint configuration"
+        }
+      ]
+    }
+  ]
+}
