@@ -1,0 +1,254 @@
+schemaVersion: "0.1"
+kind: proposal
+id: riverbend-impact-measurement
+version: "1.0"
+status: draft
+title: Impact Measurement for Riverbend Food Network
+subtitle: Pro bono engagement proposal
+date: "2026-03-02"
+validUntil: "2026-03-31"
+period:
+  start: "2026-03-16"
+  end: "2026-07-31"
+parties:
+  - id: northfield
+    role: consultant
+    name: Northfield Volunteer Consultants
+    description: A volunteer team of experienced professionals who advise nonprofits at no cost.
+  - id: riverbend
+    role: client
+    name: Riverbend Food Network
+    legalName: Riverbend Food Network, Inc.
+    description: A network of 40 food pantries serving a rural county.
+    website: https://example.org/riverbend
+people:
+  - id: alex-rivera
+    name: Alex Rivera
+    party: northfield
+    role: Project Leader
+  - id: sam-okafor
+    name: Sam Okafor
+    party: northfield
+    role: Data and survey design
+  - id: dana-lee
+    name: Dana Lee
+    party: riverbend
+    title: Executive Director
+    role: Sponsor and signer
+  - id: jordan-park
+    name: Jordan Park
+    party: riverbend
+    title: Programs Manager
+    role: Day-to-day contact
+summary: |
+  Riverbend wants to show funders and its board what its network achieves, without adding
+  work for its pantries. We propose a five-month engagement to choose a small set of
+  measures, collect them with the tools Riverbend already uses, and hand over a simple,
+  sustainable process.
+background: |
+  Riverbend coordinates 40 volunteer-run pantries. Each pantry keeps its own sign-in sheets,
+  and the network reports only pounds of food distributed. Two funders have asked for
+  evidence of outcomes, such as households served regularly and referrals to other services.
+
+  Staff time is the main constraint: Riverbend has three staff, and pantries are run by
+  volunteers who will not adopt complicated tools.
+objectives:
+  - id: O1
+    title: Agree on what to measure
+    description: A short list of measures that funders and the board value and that pantries can collect.
+  - id: O2
+    title: Collect it without new burden
+    description: A collection process that fits inside two staff hours a week.
+  - id: O3
+    title: Tell the story
+    description: A one-page impact summary that Riverbend can update each quarter.
+scope:
+  summary: The engagement covers measurement design, a pilot in five pantries, and handoff.
+  included:
+    - id: S1
+      title: Current-state review
+      description: Review sign-in sheets, the distribution log, and current funder reports.
+    - id: S2
+      title: Measure selection
+      description: Interviews with staff, three pantry leads, and two funders; a scored shortlist.
+    - id: S3
+      title: Pilot
+      description: Run the new collection process in five pantries for eight weeks.
+    - id: S4
+      title: Handoff
+      description: Written procedures and a training session for staff.
+  excluded:
+    - id: X1
+      title: Software development
+      description: No custom applications or databases; the work uses Riverbend's existing spreadsheets.
+    - id: X2
+      title: Ongoing data collection
+      description: Riverbend staff and pantries collect the data; the team coaches.
+    - id: X3
+      title: Grant writing
+      description: The team provides the impact summary, not grant applications.
+approach: |
+  We start from the data Riverbend already has, pilot early, and adjust from what the pilot
+  shows before handing over.
+phases:
+  - id: P1
+    title: Discover
+    start: "2026-03-16"
+    end: "2026-04-24"
+    goal: Learn the current state and agree on measures.
+  - id: P2
+    title: Pilot
+    start: "2026-04-27"
+    end: "2026-06-19"
+    goal: Run the process in five pantries.
+  - id: P3
+    title: Hand off
+    start: "2026-06-22"
+    end: "2026-07-31"
+    goal: Adjust, document, and train.
+deliverables:
+  - id: D1
+    title: Discovery readout
+    description: Findings from the data review and interviews.
+    phase: P1
+    due: "2026-04-17"
+    format: Slides and a two-page summary
+    objectives:
+      - O1
+    acceptanceCriteria:
+      - Reviewed with the Executive Director and Programs Manager
+  - id: D2
+    title: Measure set
+    description: Six to eight measures with definitions, sources, and owners.
+    phase: P1
+    due: "2026-04-24"
+    objectives:
+      - O1
+      - O2
+    acceptanceCriteria:
+      - Approved by the Executive Director
+      - Each measure fits the two-hour weekly budget
+  - id: D3
+    title: Pilot results
+    description: What the pilot measured, how long collection took, and what to change.
+    phase: P2
+    due: "2026-06-19"
+    objectives:
+      - O2
+  - id: D4
+    title: Impact summary template
+    description: A one-page summary filled in with pilot data.
+    phase: P3
+    due: "2026-07-17"
+    objectives:
+      - O3
+  - id: D5
+    title: Procedures and training
+    description: Written procedures and one training session for staff.
+    phase: P3
+    due: "2026-07-31"
+    objectives:
+      - O2
+milestones:
+  - id: M1
+    title: Measure decision
+    date: "2026-04-24"
+    phase: P1
+    decision: Riverbend approves the measure set.
+    deliverables:
+      - D1
+      - D2
+  - id: M2
+    title: Pilot review
+    date: "2026-06-19"
+    phase: P2
+    decision: Agree what to change before handoff.
+    deliverables:
+      - D3
+  - id: M3
+    title: Final presentation
+    date: "2026-07-31"
+    phase: P3
+    decision: Riverbend confirms it will keep using the process.
+    deliverables:
+      - D4
+      - D5
+responsibilities:
+  - id: R1
+    party: northfield
+    description: Lead interviews, analysis, and drafting of every deliverable.
+  - id: R2
+    party: northfield
+    description: Coach staff during the pilot; staff collect the data.
+  - id: R3
+    party: riverbend
+    description: Provide the sign-in sheets, distribution log, and funder reports.
+    due: "2026-03-20"
+  - id: R4
+    party: riverbend
+    description: Name five pilot pantries and introduce the team to their leads.
+    due: "2026-04-03"
+  - id: R5
+    party: riverbend
+    description: Review each deliverable and give one set of consolidated comments.
+governance:
+  summary: The Project Leader is the single point of contact for the team; the Programs Manager is the contact for Riverbend.
+  meetings:
+    - title: Check-in
+      participants: Project Leader and Programs Manager
+      frequency: Weekly
+      duration: 30 minutes
+    - title: Milestone review
+      participants: Both teams and the Executive Director
+      frequency: At each milestone
+      duration: 60 minutes
+assumptions:
+  - id: A1
+    description: Pantry sign-in sheets record a household identifier or name.
+  - id: A2
+    description: The Programs Manager can give about one hour a week to the project.
+risks:
+  - id: K1
+    description: Pantries do not return pilot data on time.
+    mitigation: Choose pilot pantries with reliable leads; send a weekly reminder.
+    owner: riverbend
+  - id: K2
+    description: Funders want outcomes that take longer than five months to show.
+    mitigation: Present the engagement as building the system and a baseline, not proving impact.
+    owner: northfield
+successCriteria:
+  - id: C1
+    description: Riverbend approves a measure set of six to eight measures.
+  - id: C2
+    description: Staff run collection for the pilot pantries within two hours a week.
+acceptance:
+  process: The team sends each deliverable to the Programs Manager, who returns one set of consolidated comments. The team revises once; the Executive Director accepts it at the next milestone.
+  reviewDays: 5
+commercials:
+  model: pro_bono
+  summary: The team volunteers its time. Riverbend pays no fees.
+  expenses: None expected. Any expense needs Riverbend's written approval before it is incurred.
+changeControl: |
+  Either party may propose a change to scope, schedule, or deliverables in writing. The
+  Project Leader and the Executive Director agree to it by email, and the next version of
+  this document records it.
+terms:
+  - id: T1
+    title: Confidentiality
+    text: The team keeps Riverbend's data and documents confidential and uses them only for this engagement.
+  - id: T2
+    title: Ownership of work product
+    text: Riverbend owns the deliverables and may use, change, and share them freely.
+  - id: T3
+    title: Ending the engagement
+    text: Either party may end the engagement with two weeks' written notice.
+openQuestions:
+  - id: Q1
+    question: Which two funders should the team interview?
+    owner: dana-lee
+    due: "2026-03-20"
+signatures:
+  - party: northfield
+    signer: alex-rivera
+  - party: riverbend
+    signer: dana-lee
