@@ -1,0 +1,752 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ProductBuildersHQ/consulting-engagement-spec/schema/v0/agreement.schema.json",
+  "$ref": "#/$defs/Agreement",
+  "$defs": {
+    "Acceptance": {
+      "properties": {
+        "process": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reviewDays": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "process"
+      ]
+    },
+    "Agreement": {
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "0.1"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "proposal",
+            "statement_of_work"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$"
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "draft",
+            "in_review",
+            "agreed",
+            "superseded",
+            "withdrawn"
+          ]
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "subtitle": {
+          "type": "string"
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "validUntil": {
+          "type": "string",
+          "format": "date"
+        },
+        "period": {
+          "$ref": "#/$defs/Period"
+        },
+        "supersedes": {
+          "$ref": "#/$defs/VersionRef"
+        },
+        "parties": {
+          "items": {
+            "$ref": "#/$defs/Party"
+          },
+          "type": "array",
+          "minItems": 2
+        },
+        "people": {
+          "items": {
+            "$ref": "#/$defs/Person"
+          },
+          "type": "array"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string",
+          "minLength": 1
+        },
+        "objectives": {
+          "items": {
+            "$ref": "#/$defs/Objective"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "scope": {
+          "$ref": "#/$defs/Scope"
+        },
+        "approach": {
+          "type": "string"
+        },
+        "phases": {
+          "items": {
+            "$ref": "#/$defs/Phase"
+          },
+          "type": "array"
+        },
+        "deliverables": {
+          "items": {
+            "$ref": "#/$defs/Deliverable"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "milestones": {
+          "items": {
+            "$ref": "#/$defs/Milestone"
+          },
+          "type": "array"
+        },
+        "responsibilities": {
+          "items": {
+            "$ref": "#/$defs/Responsibility"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "governance": {
+          "$ref": "#/$defs/Governance"
+        },
+        "assumptions": {
+          "items": {
+            "$ref": "#/$defs/Assumption"
+          },
+          "type": "array"
+        },
+        "risks": {
+          "items": {
+            "$ref": "#/$defs/Risk"
+          },
+          "type": "array"
+        },
+        "successCriteria": {
+          "items": {
+            "$ref": "#/$defs/Criterion"
+          },
+          "type": "array"
+        },
+        "acceptance": {
+          "$ref": "#/$defs/Acceptance"
+        },
+        "commercials": {
+          "$ref": "#/$defs/Commercials"
+        },
+        "changeControl": {
+          "type": "string"
+        },
+        "terms": {
+          "items": {
+            "$ref": "#/$defs/Term"
+          },
+          "type": "array"
+        },
+        "openQuestions": {
+          "items": {
+            "$ref": "#/$defs/OpenQuestion"
+          },
+          "type": "array"
+        },
+        "signatures": {
+          "items": {
+            "$ref": "#/$defs/Signature"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "version",
+        "status",
+        "title",
+        "date",
+        "parties",
+        "background",
+        "objectives",
+        "scope",
+        "deliverables",
+        "responsibilities",
+        "commercials"
+      ]
+    },
+    "Assumption": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ]
+    },
+    "Commercials": {
+      "properties": {
+        "model": {
+          "type": "string",
+          "enum": [
+            "pro_bono",
+            "fixed_fee",
+            "time_and_materials",
+            "retainer"
+          ]
+        },
+        "currency": {
+          "type": "string",
+          "pattern": "^[A-Z]{3}$"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "fees": {
+          "items": {
+            "$ref": "#/$defs/Fee"
+          },
+          "type": "array"
+        },
+        "expenses": {
+          "type": "string"
+        },
+        "paymentTerms": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "model"
+      ]
+    },
+    "Criterion": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ]
+    },
+    "Deliverable": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "due": {
+          "type": "string",
+          "format": "date"
+        },
+        "format": {
+          "type": "string"
+        },
+        "objectives": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "acceptanceCriteria": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "Fee": {
+      "properties": {
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "amount": {
+          "type": "string",
+          "pattern": "^[0-9]+(\\.[0-9]{2})?$"
+        },
+        "due": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "description",
+        "amount"
+      ]
+    },
+    "Governance": {
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "meetings": {
+          "items": {
+            "$ref": "#/$defs/Meeting"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
+    "Meeting": {
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "participants": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "title"
+      ]
+    },
+    "Milestone": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "date": {
+          "type": "string",
+          "format": "date"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "decision": {
+          "type": "string"
+        },
+        "deliverables": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "Objective": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "OpenQuestion": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "question": {
+          "type": "string",
+          "minLength": 1
+        },
+        "owner": {
+          "type": "string"
+        },
+        "due": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "question"
+      ]
+    },
+    "Party": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "consultant",
+            "client",
+            "sponsor",
+            "partner"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "legalName": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "website": {
+          "type": "string",
+          "format": "uri"
+        },
+        "address": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "role",
+        "name"
+      ]
+    },
+    "Period": {
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "start",
+        "end"
+      ]
+    },
+    "Person": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "party": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "name",
+        "party"
+      ]
+    },
+    "Phase": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        },
+        "goal": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "Responsibility": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "party": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "due": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "party",
+        "description"
+      ]
+    },
+    "Risk": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "mitigation": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "description"
+      ]
+    },
+    "Scope": {
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "included": {
+          "items": {
+            "$ref": "#/$defs/ScopeItem"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "excluded": {
+          "items": {
+            "$ref": "#/$defs/ScopeItem"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "included"
+      ]
+    },
+    "ScopeItem": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title"
+      ]
+    },
+    "Signature": {
+      "properties": {
+        "party": {
+          "type": "string"
+        },
+        "signer": {
+          "type": "string"
+        },
+        "signedDate": {
+          "type": "string",
+          "format": "date"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "wet_ink",
+            "electronic",
+            "digital"
+          ]
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "party",
+        "signer"
+      ]
+    },
+    "Term": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "text": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "text"
+      ]
+    },
+    "VersionRef": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "version"
+      ]
+    }
+  },
+  "title": "Consulting Agreement",
+  "description": "A consulting proposal or statement of work: parties, background, objectives, scope and exclusions, deliverables, milestones, responsibilities, commercials, terms, and signatures."
+}
