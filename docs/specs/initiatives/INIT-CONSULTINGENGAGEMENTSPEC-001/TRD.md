@@ -330,22 +330,31 @@ print. Each section of the `full` outline is a block (`summary`,
 `scope.excluded`, `approach`, `phases`, `deliverables`, `milestones`,
 `responsibilities`, `people`, `governance`, `governance.contacts`,
 `assumptions`, `risks`, `successCriteria`, `acceptance`, `closeout`,
-`commercials`, `changeControl`, `terms`, `openQuestions`, `signatures`).
-Filters narrow a block:
+`commercials`, `changeControl`, `terms`, `openQuestions`, `signatures`), plus
+`deliverables.list`, a short table of each deliverable's ID, title, and due
+date. Filters narrow a block:
 
 - by party role: `responsibilities.client`, `responsibilities.consultant`,
   `governance.contacts.client`, `signatures.client`;
 - by milestone kind: `milestones.kickoff`, `milestones.closeout`, and so on.
 
-Blocks in one section print in the order listed, under the section's
-heading, with their own headings one level down when there is more than one.
+Blocks in one section print in the order listed. The first block listed
+prints directly under the section's heading; each later block prints under
+its own subheading, one level down. A section prints only when at least one
+of its blocks has content, so section numbers count only printed sections.
+Responsibilities filtered to a role with one party print without the
+party's name as a heading.
 
 **TRD-082** `render.Markdown` takes an outline as an option; without one it
-uses `full`. A second built-in, `summary`, is a one-page plan: summary,
-objectives, hypotheses and assumptions, included scope, client
-responsibilities and contacts, deliverables (titles and due dates), the
-phases and milestones as one schedule table, and signatures. The CLI takes
-`--outline full|summary|<file>`. [PRD-FR-605]
+uses `full`. A second built-in, `summary`, is a one-page plan with the
+sections Summary (`summary`), Objectives (`objectives`), Hypotheses and
+assumptions (`hypotheses`, `assumptions`), Scope (`scope.included`), Client
+responsibilities (`responsibilities.client`, `governance.contacts.client`),
+Deliverables (`deliverables.list`), Schedule (`phases`, `milestones`), and
+Signatures (`signatures`). The CLI takes `--outline full|summary|<file>`;
+`validate` and `fmt` accept outline files, and `cespec outline list` and
+`cespec outline lint [--agreement FILE]` list blocks and check outlines.
+[PRD-FR-605]
 
 **TRD-083** The content digest never depends on the outline. The footer and
 the information table name the outline when it is not `full`.
