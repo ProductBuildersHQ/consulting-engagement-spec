@@ -29,6 +29,7 @@ const suffix = ".schema.json"
 // Schema names.
 const (
 	Agreement = "agreement"
+	Outline   = "outline"
 )
 
 // ErrUnknownSchema is returned for a name that is not embedded.

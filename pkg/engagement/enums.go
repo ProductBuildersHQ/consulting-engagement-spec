@@ -195,3 +195,32 @@ func (k MilestoneKind) Label() string {
 		return string(k)
 	}
 }
+
+// OutlineKind is the kind of an outline document.
+type OutlineKind string
+
+// KindOutline is the only outline kind.
+const KindOutline OutlineKind = "outline"
+
+// AllOutlineKinds returns every OutlineKind.
+func AllOutlineKinds() []OutlineKind { return []OutlineKind{KindOutline} }
+
+// Valid reports whether k is a known OutlineKind.
+func (k OutlineKind) Valid() bool { return slices.Contains(AllOutlineKinds(), k) }
+
+// DatePrecision is how precisely dates print.
+type DatePrecision string
+
+// Date precisions.
+const (
+	// PrecisionDay prints full dates, such as "November 2, 2026".
+	PrecisionDay DatePrecision = "day"
+	// PrecisionMonth prints the month and year, such as "November 2026".
+	PrecisionMonth DatePrecision = "month"
+)
+
+// AllDatePrecisions returns every DatePrecision.
+func AllDatePrecisions() []DatePrecision { return []DatePrecision{PrecisionDay, PrecisionMonth} }
+
+// Valid reports whether p is a known DatePrecision.
+func (p DatePrecision) Valid() bool { return slices.Contains(AllDatePrecisions(), p) }

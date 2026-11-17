@@ -34,6 +34,7 @@ type Definition struct {
 func Definitions() []Definition {
 	return []Definition{
 		{"agreement", "Consulting Agreement", "A consulting proposal or statement of work: parties, background, objectives, scope and exclusions, deliverables, milestones, responsibilities, commercials, terms, and signatures.", &engagement.Agreement{}},
+		{"outline", "Agreement Outline", "A layout for consulting agreements: sections with their own headings and order, each drawn from named parts of an agreement.", &engagement.Outline{}},
 	}
 }
 
@@ -101,6 +102,8 @@ func EnumValues() map[reflect.Type][]string {
 		reflect.TypeFor[engagement.CommercialModel](): strs(engagement.AllCommercialModels()),
 		reflect.TypeFor[engagement.SignatureMethod](): strs(engagement.AllSignatureMethods()),
 		reflect.TypeFor[engagement.MilestoneKind]():   strs(engagement.AllMilestoneKinds()),
+		reflect.TypeFor[engagement.OutlineKind]():     strs(engagement.AllOutlineKinds()),
+		reflect.TypeFor[engagement.DatePrecision]():   strs(engagement.AllDatePrecisions()),
 	}
 }
 
