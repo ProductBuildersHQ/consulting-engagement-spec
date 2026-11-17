@@ -68,6 +68,35 @@ func TestRules(t *testing.T) {
 		{RuleNoAcceptanceCriteria, Warning, func(a *engagement.Agreement) { a.Acceptance = nil }},
 		{RuleObjectiveUnserved, Warning, func(a *engagement.Agreement) { a.Deliverables[3].Objectives = []string{"O1"} }},
 		{RuleNoSignatures, Warning, func(a *engagement.Agreement) { a.Signatures = nil }},
+		{RuleUnknownReference, Error, func(a *engagement.Agreement) {
+			a.Hypotheses = []engagement.Hypothesis{{ID: "H1", Statement: "S", Deliverables: []string{"D9"}}}
+		}},
+		{RuleUnknownReference, Error, func(a *engagement.Agreement) {
+			a.Hypotheses = []engagement.Hypothesis{{ID: "H1", Statement: "S", Milestone: "M9"}}
+		}},
+		{RuleUnknownReference, Error, func(a *engagement.Agreement) {
+			a.Governance.Contacts = []engagement.Contact{{Party: "riverbend", Person: "nobody"}}
+		}},
+		{RuleUnknownReference, Error, func(a *engagement.Agreement) {
+			a.Closeout = &engagement.Closeout{Reports: []engagement.Report{{ID: "R1", To: "nobody", Description: "D"}}}
+		}},
+		{RuleUnknownReference, Error, func(a *engagement.Agreement) {
+			a.Closeout = &engagement.Closeout{Evaluations: []engagement.Evaluation{{ID: "E1", Party: "nobody", Subject: "S"}}}
+		}},
+		{RuleDuplicateID, Error, func(a *engagement.Agreement) {
+			a.Hypotheses = []engagement.Hypothesis{{ID: "D1", Statement: "S", Test: "T"}}
+		}},
+		{RuleContactParty, Error, func(a *engagement.Agreement) {
+			a.Governance.Contacts = []engagement.Contact{{Party: "northfield", Person: "dana-lee"}}
+		}},
+		{RuleHypothesisUntested, Warning, func(a *engagement.Agreement) {
+			a.Hypotheses = []engagement.Hypothesis{{ID: "H1", Statement: "S"}}
+		}},
+		{RuleNoKickoff, Warning, func(a *engagement.Agreement) { a.Milestones[0].Kind = engagement.MilestoneCloseout }},
+		{RuleNoCloseout, Warning, func(a *engagement.Agreement) { a.Milestones[0].Kind = engagement.MilestoneKickoff }},
+		{RuleNoClientContact, Warning, func(a *engagement.Agreement) {
+			a.Governance.Contacts = []engagement.Contact{{Party: "northfield", Person: "alex-rivera"}}
+		}},
 	}
 	covered := map[string]bool{}
 	for _, tt := range tests {
@@ -97,5 +126,21 @@ func TestProBonoZeroFeeIsFine(t *testing.T) {
 	a.Commercials.Fees = []engagement.Fee{{Description: "Fee", Amount: "0.00"}}
 	if slices.Contains(rules(Agreement(a)), RuleProBonoFee) {
 		t.Fatal("a zero fee should not be flagged")
+	}
+}
+
+func TestAlignmentFieldsClean(t *testing.T) {
+	a := load(t)
+	a.Hypotheses = []engagement.Hypothesis{{ID: "H1", Statement: "S", Deliverables: []string{"D1"}, Milestone: a.Milestones[0].ID}}
+	a.Milestones[0].Kind = engagement.MilestoneKickoff
+	a.Milestones[len(a.Milestones)-1].Kind = engagement.MilestoneCloseout
+	a.Governance.Contacts = []engagement.Contact{{Party: "riverbend", Person: "jordan-park", Role: "Day-to-day lead"}}
+	a.Closeout = &engagement.Closeout{
+		Evaluations: []engagement.Evaluation{{ID: "E1", Party: "riverbend", Subject: "the engagement"}},
+		Reports:     []engagement.Report{{ID: "CR1", To: "northfield", Description: "Final report"}},
+	}
+	a.Signatures[0].Capacity = "Project Leader"
+	if res := Agreement(a); len(res.Findings) != 0 {
+		t.Fatalf("findings: %v", res.Findings)
 	}
 }

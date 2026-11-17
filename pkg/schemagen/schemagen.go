@@ -100,6 +100,7 @@ func EnumValues() map[reflect.Type][]string {
 		reflect.TypeFor[engagement.PartyRole]():       strs(engagement.AllPartyRoles()),
 		reflect.TypeFor[engagement.CommercialModel](): strs(engagement.AllCommercialModels()),
 		reflect.TypeFor[engagement.SignatureMethod](): strs(engagement.AllSignatureMethods()),
+		reflect.TypeFor[engagement.MilestoneKind]():   strs(engagement.AllMilestoneKinds()),
 	}
 }
 

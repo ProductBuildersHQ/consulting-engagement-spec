@@ -28,6 +28,11 @@ func TestEnums(t *testing.T) {
 			t.Errorf("method %q invalid", m)
 		}
 	}
+	for _, k := range AllMilestoneKinds() {
+		if !k.Valid() || k.Label() == string(k) {
+			t.Errorf("milestone kind %q: invalid or unlabeled", k)
+		}
+	}
 	if Kind("memo").Valid() || Status("done").Valid() {
 		t.Error("unknown values reported valid")
 	}

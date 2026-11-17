@@ -30,6 +30,16 @@ func (a *Agreement) Phase(id string) (Phase, bool) {
 	return Phase{}, false
 }
 
+// Milestone returns the milestone with the given ID.
+func (a *Agreement) Milestone(id string) (Milestone, bool) {
+	for _, m := range a.Milestones {
+		if m.ID == id {
+			return m, true
+		}
+	}
+	return Milestone{}, false
+}
+
 // PartiesByRole returns the parties with the given role, in document order.
 func (a *Agreement) PartiesByRole(role PartyRole) []Party {
 	var out []Party

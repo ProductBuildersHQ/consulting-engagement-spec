@@ -101,6 +101,12 @@
           "type": "array",
           "minItems": 1
         },
+        "hypotheses": {
+          "items": {
+            "$ref": "#/$defs/Hypothesis"
+          },
+          "type": "array"
+        },
         "scope": {
           "$ref": "#/$defs/Scope"
         },
@@ -156,6 +162,9 @@
         },
         "acceptance": {
           "$ref": "#/$defs/Acceptance"
+        },
+        "closeout": {
+          "$ref": "#/$defs/Closeout"
         },
         "commercials": {
           "$ref": "#/$defs/Commercials"
@@ -219,6 +228,27 @@
         "description"
       ]
     },
+    "Closeout": {
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "evaluations": {
+          "items": {
+            "$ref": "#/$defs/Evaluation"
+          },
+          "type": "array"
+        },
+        "reports": {
+          "items": {
+            "$ref": "#/$defs/Report"
+          },
+          "type": "array"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object"
+    },
     "Commercials": {
       "properties": {
         "model": {
@@ -254,6 +284,25 @@
       "type": "object",
       "required": [
         "model"
+      ]
+    },
+    "Contact": {
+      "properties": {
+        "party": {
+          "type": "string"
+        },
+        "person": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "party",
+        "person"
       ]
     },
     "Criterion": {
@@ -320,6 +369,35 @@
         "title"
       ]
     },
+    "Evaluation": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "party": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1
+        },
+        "method": {
+          "type": "string"
+        },
+        "due": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "party",
+        "subject"
+      ]
+    },
     "Fee": {
       "properties": {
         "description": {
@@ -346,6 +424,12 @@
         "summary": {
           "type": "string"
         },
+        "contacts": {
+          "items": {
+            "$ref": "#/$defs/Contact"
+          },
+          "type": "array"
+        },
         "meetings": {
           "items": {
             "$ref": "#/$defs/Meeting"
@@ -355,6 +439,36 @@
       },
       "additionalProperties": false,
       "type": "object"
+    },
+    "Hypothesis": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "statement": {
+          "type": "string",
+          "minLength": 1
+        },
+        "test": {
+          "type": "string"
+        },
+        "deliverables": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "milestone": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "statement"
+      ]
     },
     "Meeting": {
       "properties": {
@@ -387,6 +501,17 @@
         "title": {
           "type": "string",
           "minLength": 1
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "kickoff",
+            "checkpoint",
+            "review",
+            "decision",
+            "final",
+            "closeout"
+          ]
         },
         "date": {
           "type": "string",
@@ -581,6 +706,32 @@
         "title"
       ]
     },
+    "Report": {
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]*$"
+        },
+        "to": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "due": {
+          "type": "string",
+          "format": "date"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "id",
+        "to",
+        "description"
+      ]
+    },
     "Responsibility": {
       "properties": {
         "id": {
@@ -683,6 +834,9 @@
           "type": "string"
         },
         "signer": {
+          "type": "string"
+        },
+        "capacity": {
           "type": "string"
         },
         "signedDate": {

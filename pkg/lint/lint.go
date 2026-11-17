@@ -45,6 +45,12 @@ const (
 	RuleNoAcceptanceCriteria   = "no-acceptance-criteria"
 	RuleObjectiveUnserved      = "objective-unserved"
 	RuleNoSignatures           = "no-signatures"
+	RuleUnknownReference       = "unknown-reference"
+	RuleContactParty           = "contact-party"
+	RuleHypothesisUntested     = "hypothesis-untested"
+	RuleNoKickoff              = "no-kickoff"
+	RuleNoCloseout             = "no-closeout"
+	RuleNoClientContact        = "no-client-contact"
 )
 
 // Finding is one problem.
@@ -97,10 +103,12 @@ func Agreement(a *engagement.Agreement) Result {
 	l.ids()
 	l.roles()
 	l.references()
+	l.alignmentReferences()
 	l.dates()
 	l.commercials()
 	l.lifecycle()
 	l.completeness()
+	l.alignment()
 	return Result{Findings: l.out}
 }
 
@@ -126,6 +134,9 @@ func (l *linter) ids() {
 	}
 	for _, x := range a.Objectives {
 		check("objectives", x.ID)
+	}
+	for _, x := range a.Hypotheses {
+		check("hypotheses", x.ID)
 	}
 	for _, x := range a.Scope.Included {
 		check("scope/included", x.ID)
@@ -153,6 +164,14 @@ func (l *linter) ids() {
 	}
 	for _, x := range a.SuccessCriteria {
 		check("successCriteria", x.ID)
+	}
+	if c := a.Closeout; c != nil {
+		for _, x := range c.Evaluations {
+			check("closeout/evaluations", x.ID)
+		}
+		for _, x := range c.Reports {
+			check("closeout/reports", x.ID)
+		}
 	}
 	for _, x := range a.Terms {
 		check("terms", x.ID)
@@ -247,6 +266,60 @@ func (l *linter) references() {
 		}
 		if p.Party != s.Party {
 			l.add(Error, RuleSignerParty, base+"/signer", "%s belongs to party %q, not %q", p.Name, p.Party, s.Party)
+		}
+	}
+}
+
+// alignmentReferences checks the references of hypotheses, contacts, and
+// the closeout.
+func (l *linter) alignmentReferences() {
+	a := l.a
+	deliverables := map[string]bool{}
+	for _, d := range a.Deliverables {
+		deliverables[d.ID] = true
+	}
+	unknown := func(path, what, id string) {
+		l.add(Error, RuleUnknownReference, path, "unknown %s %q", what, id)
+	}
+	for _, h := range a.Hypotheses {
+		base := "hypotheses/" + h.ID
+		for _, d := range h.Deliverables {
+			if !deliverables[d] {
+				unknown(base+"/deliverables", "deliverable", d)
+			}
+		}
+		if h.Milestone != "" {
+			if _, ok := a.Milestone(h.Milestone); !ok {
+				unknown(base+"/milestone", "milestone", h.Milestone)
+			}
+		}
+	}
+	if g := a.Governance; g != nil {
+		for i, c := range g.Contacts {
+			base := fmt.Sprintf("governance/contacts/%d", i)
+			if _, ok := a.Party(c.Party); !ok {
+				unknown(base+"/party", "party", c.Party)
+			}
+			p, ok := a.Person(c.Person)
+			if !ok {
+				unknown(base+"/person", "person", c.Person)
+				continue
+			}
+			if p.Party != c.Party {
+				l.add(Error, RuleContactParty, base+"/person", "%s belongs to party %q, not %q", p.Name, p.Party, c.Party)
+			}
+		}
+	}
+	if c := a.Closeout; c != nil {
+		for _, e := range c.Evaluations {
+			if _, ok := a.Party(e.Party); !ok {
+				unknown("closeout/evaluations/"+e.ID+"/party", "party", e.Party)
+			}
+		}
+		for _, r := range c.Reports {
+			if _, ok := a.Party(r.To); !ok {
+				unknown("closeout/reports/"+r.ID+"/to", "party", r.To)
+			}
 		}
 	}
 }
@@ -375,6 +448,44 @@ func (l *linter) completeness() {
 	}
 }
 
+// alignment flags gaps in the content other organizations' forms often ask
+// for. Each check applies only once the agreement uses the feature, so an
+// agreement written without them gets no new warnings.
+func (l *linter) alignment() {
+	a := l.a
+	for _, h := range a.Hypotheses {
+		if strings.TrimSpace(h.Test) == "" && len(h.Deliverables) == 0 && h.Milestone == "" {
+			l.add(Warning, RuleHypothesisUntested, "hypotheses/"+h.ID, "no test, deliverable, or milestone says how this hypothesis is tested")
+		}
+	}
+	kinds := map[engagement.MilestoneKind]bool{}
+	for _, m := range a.Milestones {
+		if m.Kind != "" {
+			kinds[m.Kind] = true
+		}
+	}
+	if len(kinds) > 0 {
+		if !kinds[engagement.MilestoneKickoff] {
+			l.add(Warning, RuleNoKickoff, "milestones", "milestones have kinds, but none is a kickoff")
+		}
+		if !kinds[engagement.MilestoneCloseout] {
+			l.add(Warning, RuleNoCloseout, "milestones", "milestones have kinds, but none is a closeout")
+		}
+	}
+	if g := a.Governance; g != nil && len(g.Contacts) > 0 {
+		client := false
+		for _, c := range g.Contacts {
+			if p, ok := a.Party(c.Party); ok && p.Role == engagement.RoleClient {
+				client = true
+				break
+			}
+		}
+		if !client {
+			l.add(Warning, RuleNoClientContact, "governance/contacts", "contacts are listed, but none belongs to the client")
+		}
+	}
+}
+
 // Rules returns every rule ID, sorted.
 func Rules() []string {
 	r := []string{
@@ -383,6 +494,8 @@ func Rules() []string {
 		RuleDateOrder, RuleDateOutsidePeriod, RuleCurrencyRequired, RuleProBonoFee,
 		RuleAgreedOpenQuestions, RuleAgreedUnsigned, RuleNoExclusions, RuleNoClientResponsibility,
 		RuleNoAcceptanceCriteria, RuleObjectiveUnserved, RuleNoSignatures,
+		RuleUnknownReference, RuleContactParty, RuleHypothesisUntested,
+		RuleNoKickoff, RuleNoCloseout, RuleNoClientContact,
 	}
 	slices.Sort(r)
 	return r

@@ -44,7 +44,11 @@ type Agreement struct {
 	// needed now (Markdown).
 	Background string      `json:"background" jsonschema:"required,minLength=1"`
 	Objectives []Objective `json:"objectives" jsonschema:"required,minItems=1"`
-	Scope      Scope       `json:"scope" jsonschema:"required"`
+	// Hypotheses are what the engagement sets out to test. Unlike an
+	// assumption, which the plan relies on, a hypothesis is a claim the work
+	// confirms or rejects.
+	Hypotheses []Hypothesis `json:"hypotheses,omitempty"`
+	Scope      Scope        `json:"scope" jsonschema:"required"`
 	// Approach describes the method and how the work is organized
 	// (Markdown).
 	Approach         string           `json:"approach,omitempty"`
@@ -57,6 +61,7 @@ type Agreement struct {
 	Risks            []Risk           `json:"risks,omitempty"`
 	SuccessCriteria  []Criterion      `json:"successCriteria,omitempty"`
 	Acceptance       *Acceptance      `json:"acceptance,omitempty"`
+	Closeout         *Closeout        `json:"closeout,omitempty"`
 	Commercials      Commercials      `json:"commercials" jsonschema:"required"`
 	// ChangeControl describes how scope, schedule, or fees change after
 	// agreement (Markdown).
@@ -154,14 +159,28 @@ type Deliverable struct {
 	AcceptanceCriteria []string `json:"acceptanceCriteria,omitempty"`
 }
 
+// Hypothesis is a claim the engagement tests.
+type Hypothesis struct {
+	ID        string `json:"id" jsonschema:"required,pattern=^[A-Za-z0-9][A-Za-z0-9._-]*$"`
+	Statement string `json:"statement" jsonschema:"required,minLength=1"`
+	// Test says how the work tests the claim (Markdown).
+	Test string `json:"test,omitempty"`
+	// Deliverables are the IDs of the deliverables that produce the evidence.
+	Deliverables []string `json:"deliverables,omitempty"`
+	// Milestone is the ID of the milestone where the result is judged.
+	Milestone string `json:"milestone,omitempty"`
+}
+
 // Milestone is a dated checkpoint, usually a meeting where something is
 // reviewed or decided.
 type Milestone struct {
-	ID          string `json:"id" jsonschema:"required,pattern=^[A-Za-z0-9][A-Za-z0-9._-]*$"`
-	Title       string `json:"title" jsonschema:"required,minLength=1"`
-	Date        string `json:"date,omitempty" jsonschema:"format=date"`
-	Phase       string `json:"phase,omitempty"`
-	Description string `json:"description,omitempty"`
+	ID    string `json:"id" jsonschema:"required,pattern=^[A-Za-z0-9][A-Za-z0-9._-]*$"`
+	Title string `json:"title" jsonschema:"required,minLength=1"`
+	// Kind labels the milestone, such as its kickoff or closeout.
+	Kind        MilestoneKind `json:"kind,omitempty"`
+	Date        string        `json:"date,omitempty" jsonschema:"format=date"`
+	Phase       string        `json:"phase,omitempty"`
+	Description string        `json:"description,omitempty"`
 	// Decision is what is decided or approved at the milestone.
 	Decision string `json:"decision,omitempty"`
 	// Deliverables are the IDs of deliverables presented at the milestone.
@@ -179,8 +198,19 @@ type Responsibility struct {
 
 // Governance describes how the parties work together.
 type Governance struct {
-	Summary  string    `json:"summary,omitempty"`
+	Summary string `json:"summary,omitempty"`
+	// Contacts name each party's point of contact.
+	Contacts []Contact `json:"contacts,omitempty"`
 	Meetings []Meeting `json:"meetings,omitempty"`
+}
+
+// Contact is a party's point of contact for the engagement.
+type Contact struct {
+	Party string `json:"party" jsonschema:"required"`
+	// Person is a person ID.
+	Person string `json:"person" jsonschema:"required"`
+	// Role is the contact's role, such as "Day-to-day lead".
+	Role string `json:"role,omitempty"`
 }
 
 // Meeting is a recurring or one-time meeting.
@@ -218,6 +248,35 @@ type Acceptance struct {
 	// ReviewDays is how many business days the client has to review a
 	// deliverable before it is treated as accepted. Zero means not set.
 	ReviewDays int `json:"reviewDays,omitempty" jsonschema:"minimum=0"`
+}
+
+// Closeout describes how the engagement ends: the evaluations each party
+// gives and the reports owed to a party, such as a sponsor.
+type Closeout struct {
+	Summary     string       `json:"summary,omitempty"`
+	Evaluations []Evaluation `json:"evaluations,omitempty"`
+	Reports     []Report     `json:"reports,omitempty"`
+}
+
+// Evaluation is an assessment one party gives of the engagement.
+type Evaluation struct {
+	ID string `json:"id" jsonschema:"required,pattern=^[A-Za-z0-9][A-Za-z0-9._-]*$"`
+	// Party is the ID of the party that evaluates.
+	Party string `json:"party" jsonschema:"required"`
+	// Subject is what is evaluated, such as "the engagement and the team".
+	Subject string `json:"subject" jsonschema:"required,minLength=1"`
+	// Method is how, such as "written evaluation form".
+	Method string `json:"method,omitempty"`
+	Due    string `json:"due,omitempty" jsonschema:"format=date"`
+}
+
+// Report is a report owed to a party at closeout.
+type Report struct {
+	ID string `json:"id" jsonschema:"required,pattern=^[A-Za-z0-9][A-Za-z0-9._-]*$"`
+	// To is the ID of the party that receives it.
+	To          string `json:"to" jsonschema:"required"`
+	Description string `json:"description" jsonschema:"required,minLength=1"`
+	Due         string `json:"due,omitempty" jsonschema:"format=date"`
 }
 
 // Commercials states the fee model, fees, and expenses.
@@ -263,6 +322,9 @@ type Signature struct {
 	Party string `json:"party" jsonschema:"required"`
 	// Signer is a person ID.
 	Signer string `json:"signer" jsonschema:"required"`
+	// Capacity is the capacity in which the signer signs, such as "Board
+	// representative". It prints in place of the person's title.
+	Capacity string `json:"capacity,omitempty"`
 	// SignedDate is set once the signer has signed (YYYY-MM-DD).
 	SignedDate string          `json:"signedDate,omitempty" jsonschema:"format=date"`
 	Method     SignatureMethod `json:"method,omitempty"`

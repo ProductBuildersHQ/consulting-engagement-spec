@@ -147,3 +147,51 @@ func AllSignatureMethods() []SignatureMethod {
 
 // Valid reports whether m is a known SignatureMethod.
 func (m SignatureMethod) Valid() bool { return slices.Contains(AllSignatureMethods(), m) }
+
+// MilestoneKind labels what a milestone is for.
+type MilestoneKind string
+
+// Milestone kinds.
+const (
+	// MilestoneKickoff starts the engagement: the plan is confirmed and the
+	// team introduced.
+	MilestoneKickoff MilestoneKind = "kickoff"
+	// MilestoneCheckpoint is a progress check partway through.
+	MilestoneCheckpoint MilestoneKind = "checkpoint"
+	// MilestoneReview reviews a deliverable or a body of work.
+	MilestoneReview MilestoneKind = "review"
+	// MilestoneDecision is where a party makes a decision the work depends on.
+	MilestoneDecision MilestoneKind = "decision"
+	// MilestoneFinal presents the final results.
+	MilestoneFinal MilestoneKind = "final"
+	// MilestoneCloseout ends the engagement: evaluations and closing reports.
+	MilestoneCloseout MilestoneKind = "closeout"
+)
+
+// AllMilestoneKinds returns every MilestoneKind in lifecycle order.
+func AllMilestoneKinds() []MilestoneKind {
+	return []MilestoneKind{MilestoneKickoff, MilestoneCheckpoint, MilestoneReview, MilestoneDecision, MilestoneFinal, MilestoneCloseout}
+}
+
+// Valid reports whether k is a known MilestoneKind.
+func (k MilestoneKind) Valid() bool { return slices.Contains(AllMilestoneKinds(), k) }
+
+// Label returns the display name of k.
+func (k MilestoneKind) Label() string {
+	switch k {
+	case MilestoneKickoff:
+		return "Kickoff"
+	case MilestoneCheckpoint:
+		return "Checkpoint"
+	case MilestoneReview:
+		return "Review"
+	case MilestoneDecision:
+		return "Decision"
+	case MilestoneFinal:
+		return "Final"
+	case MilestoneCloseout:
+		return "Closeout"
+	default:
+		return string(k)
+	}
+}
