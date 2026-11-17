@@ -62,11 +62,11 @@ func wrapErrors(root *cobra.Command) *cobra.Command {
 func validateCmd() *cobra.Command {
 	return &cobra.Command{
 		Use:   "validate FILE...",
-		Short: "Check agreements against the JSON Schema",
+		Short: "Check agreements and outlines against their JSON Schemas",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			for _, path := range args {
-				if _, err := engagementio.LoadAgreement(path); err != nil {
+				if _, err := engagementio.LoadDocument(path); err != nil {
 					return err
 				}
 				fmt.Fprintf(cmd.OutOrStdout(), "%s: valid\n", path)
@@ -120,12 +120,12 @@ func fmtCmd() *cobra.Command {
 	var check bool
 	c := &cobra.Command{
 		Use:   "fmt FILE...",
-		Short: "Rewrite agreements in canonical form",
+		Short: "Rewrite agreements and outlines in canonical form",
 		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var unformatted []string
 			for _, path := range args {
-				a, err := engagementio.LoadAgreement(path)
+				a, err := engagementio.LoadDocument(path)
 				if err != nil {
 					return err
 				}

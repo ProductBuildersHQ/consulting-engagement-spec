@@ -98,3 +98,32 @@ func readFile(path string) ([]byte, Format, error) {
 	}
 	return data, f, nil
 }
+
+// LoadDocument reads an agreement or an outline, chosen by the document's
+// kind, and returns *engagement.Agreement or *engagement.Outline.
+func LoadDocument(path string) (any, error) {
+	data, f, err := readFile(path)
+	if err != nil {
+		return nil, err
+	}
+	j, err := ToJSON(data, f)
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", path, err)
+	}
+	var head struct {
+		Kind string `json:"kind"`
+	}
+	if err := json.Unmarshal(j, &head); err != nil {
+		return nil, fmt.Errorf("%s: %w: %w", path, ErrInvalidDocument, err)
+	}
+	var v any
+	if engagement.OutlineKind(head.Kind).Valid() {
+		v, err = ParseOutline(data, f)
+	} else {
+		v, err = ParseAgreement(data, f)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", path, err)
+	}
+	return v, nil
+}
