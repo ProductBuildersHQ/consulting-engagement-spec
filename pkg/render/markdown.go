@@ -11,8 +11,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ProductBuildersHQ/consulting-engagement-spec/pkg/crosswalk"
 	"github.com/ProductBuildersHQ/consulting-engagement-spec/pkg/engagement"
 	"github.com/ProductBuildersHQ/consulting-engagement-spec/pkg/engagementio"
+	"github.com/ProductBuildersHQ/consulting-engagement-spec/pkg/outline"
 )
 
 // Flavor is the Markdown dialect to write.
@@ -33,6 +35,11 @@ type Options struct {
 	Flavor Flavor
 	// OmitDigest leaves the content digest out of the document.
 	OmitDigest bool
+	// Outline lays the agreement out; the full layout when nil.
+	Outline *engagement.Outline
+	// Crosswalk, when set, appends an appendix showing where each section
+	// of this outline is answered in the rendered document.
+	Crosswalk *engagement.Outline
 }
 
 // Markdown renders a as a Markdown document.
@@ -43,6 +50,14 @@ func Markdown(a *engagement.Agreement, opts Options) ([]byte, error) {
 	if opts.Flavor != FlavorPandoc && opts.Flavor != FlavorGFM {
 		return nil, fmt.Errorf("render: unknown flavor %q", opts.Flavor)
 	}
+	o := opts.Outline
+	if o == nil {
+		o = outline.Full()
+	}
+	layout, err := resolve(o)
+	if err != nil {
+		return nil, err
+	}
 	digest := ""
 	if !opts.OmitDigest {
 		d, err := engagementio.ContentDigest(a)
@@ -51,37 +66,57 @@ func Markdown(a *engagement.Agreement, opts Options) ([]byte, error) {
 		}
 		digest = d
 	}
-	w := &writer{a: a, opts: opts, digest: digest}
+	w := &writer{a: a, opts: opts, digest: digest, outline: o, lvl: 3}
 	w.title()
-	w.info()
-	w.text("Summary", a.Summary)
-	w.text("Background", a.Background)
-	w.objectives()
-	w.scope()
-	w.approach()
-	w.deliverables()
-	w.milestones()
-	w.responsibilities()
-	w.team()
-	w.governance()
-	w.assumptions()
-	w.risks()
-	w.successCriteria()
-	w.acceptance()
-	w.commercials()
-	w.text("Changes to this agreement", a.ChangeControl)
-	w.terms()
-	w.openQuestions()
-	w.signatures()
+	if o.ShowsInformation() {
+		w.info()
+	}
+	for _, sec := range layout {
+		w.writeSection(sec)
+	}
+	if opts.Crosswalk != nil {
+		cw, err := crosswalk.Build(a, o, opts.Crosswalk)
+		if err != nil {
+			return nil, err
+		}
+		w.pageBreak()
+		w.p("## Appendix: Correspondence with %s\n\n", cw.Target)
+		w.p("%s", cw.Markdown())
+	}
 	return []byte(strings.TrimRight(w.b.String(), "\n") + "\n"), nil
+}
+
+// layoutSection is an outline section with its references parsed.
+type layoutSection struct {
+	engagement.OutlineSection
+	refs []outline.Ref
+}
+
+func resolve(o *engagement.Outline) ([]layoutSection, error) {
+	out := make([]layoutSection, 0, len(o.Sections))
+	for _, s := range o.Sections {
+		ls := layoutSection{OutlineSection: s}
+		for _, name := range s.From {
+			r, err := outline.ParseRef(name)
+			if err != nil {
+				return nil, fmt.Errorf("render: outline %s, section %q: %w", o.ID, s.Heading, err)
+			}
+			ls.refs = append(ls.refs, r)
+		}
+		out = append(out, ls)
+	}
+	return out, nil
 }
 
 type writer struct {
 	a       *engagement.Agreement
 	opts    Options
 	digest  string
+	outline *engagement.Outline
 	b       strings.Builder
 	section int
+	// lvl is the heading level for headings inside a block.
+	lvl int
 }
 
 func (w *writer) p(format string, args ...any) {
@@ -97,21 +132,110 @@ func (w *writer) para(s string) {
 }
 
 func (w *writer) h2(title string) {
+	if !w.outline.IsNumbered() {
+		w.p("## %s\n\n", title)
+		return
+	}
 	w.section++
 	w.p("## %d. %s\n\n", w.section, title)
 }
 
+// h3 writes a heading inside a block.
 func (w *writer) h3(title string) {
-	w.p("### %s\n\n", title)
+	w.p("%s %s\n\n", strings.Repeat("#", w.lvl), title)
 }
 
-// text writes a section holding one Markdown field, if it is set.
-func (w *writer) text(title, body string) {
-	if strings.TrimSpace(body) == "" {
+// writeSection writes one outline section: nothing when none of its blocks has
+// content, otherwise the heading, the outline's note, and each block with
+// content. The first block listed prints directly under the heading; each
+// later one under its own subheading.
+func (w *writer) writeSection(sec layoutSection) {
+	var shown []outline.Ref
+	for _, r := range sec.refs {
+		if outline.HasContent(w.a, r) {
+			shown = append(shown, r)
+		}
+	}
+	if len(shown) == 0 {
 		return
 	}
-	w.h2(title)
-	w.para(body)
+	for _, r := range shown {
+		if r.Block.Name == "signatures" {
+			w.pageBreak()
+			break
+		}
+	}
+	w.h2(sec.Heading)
+	w.para(sec.Note)
+	for _, r := range shown {
+		if r.Block.Name == sec.refs[0].Block.Name && r.Value == sec.refs[0].Value {
+			w.lvl = 3
+		} else {
+			w.lvl = 3
+			w.h3(r.Block.Title)
+			w.lvl = 4
+		}
+		w.block(r)
+	}
+	w.lvl = 3
+}
+
+func (w *writer) block(r outline.Ref) {
+	a := w.a
+	switch r.Block.Name {
+	case "summary":
+		w.para(a.Summary)
+	case "background":
+		w.para(a.Background)
+	case "objectives":
+		w.objectives()
+	case "hypotheses":
+		w.hypotheses()
+	case "scope":
+		w.scope()
+	case "scope.included":
+		w.included()
+	case "scope.excluded":
+		w.excluded()
+	case "approach":
+		w.para(a.Approach)
+	case "phases":
+		w.phases()
+	case "deliverables":
+		w.deliverables()
+	case "deliverables.list":
+		w.deliverableList()
+	case "milestones":
+		w.milestones(outline.Milestones(a, r.Value))
+	case "responsibilities":
+		w.responsibilities(r.Value)
+	case "people":
+		w.team()
+	case "governance":
+		w.governance()
+	case "governance.contacts":
+		w.contacts(outline.Contacts(a, r.Value))
+	case "assumptions":
+		w.assumptions()
+	case "risks":
+		w.risks()
+	case "successCriteria":
+		w.successCriteria()
+	case "acceptance":
+		w.acceptance()
+	case "closeout":
+		w.closeout()
+	case "commercials":
+		w.commercials()
+	case "changeControl":
+		w.para(a.ChangeControl)
+	case "terms":
+		w.terms()
+	case "openQuestions":
+		w.openQuestions()
+	case "signatures":
+		w.signatures(outline.Signatures(a, r.Value))
+	}
 }
 
 func (w *writer) pageBreak() {
@@ -136,7 +260,12 @@ func (w *writer) title() {
 		w.p("fontsize: 11pt\n")
 		w.p("colorlinks: true\n")
 		// The footer names the document and version on every page of the
-		// PDF. The ID pattern allows only characters that are safe in TeX.
+		// PDF, and the layout when it is not the full agreement. The ID
+		// pattern allows only characters that are safe in TeX.
+		footer := fmt.Sprintf("%s %s, version %s", a.Kind.Label(), a.ID, a.Version)
+		if w.outline.ID != outline.NameFull {
+			footer += ", " + texEscape(w.outline.Title)
+		}
 		w.p("header-includes:\n")
 		w.p("  - |\n")
 		w.p("    ```{=latex}\n")
@@ -144,7 +273,7 @@ func (w *writer) title() {
 		w.p("    \\pagestyle{fancy}\n")
 		w.p("    \\fancyhf{}\n")
 		w.p("    \\renewcommand{\\headrulewidth}{0pt}\n")
-		w.p("    \\fancyfoot[L]{\\footnotesize %s %s, version %s}\n", a.Kind.Label(), a.ID, a.Version)
+		w.p("    \\fancyfoot[L]{\\footnotesize %s}\n", footer)
 		w.p("    \\fancyfoot[R]{\\footnotesize Page \\thepage}\n")
 		w.p("    ```\n")
 		w.p("---\n\n")
@@ -160,8 +289,11 @@ func (w *writer) info() {
 	a := w.a
 	rows := [][2]string{
 		{"Document", fmt.Sprintf("%s, version %s (%s)", a.Kind.Label(), a.Version, a.Status.Label())},
-		{"Reference", "`" + a.ID + "`"},
 	}
+	if w.outline.ID != outline.NameFull {
+		rows = append(rows, [2]string{"Layout", w.outline.Title})
+	}
+	rows = append(rows, [2]string{"Reference", "`" + a.ID + "`"})
 	if names := w.partyNames(engagement.RoleConsultant); names != "" {
 		rows = append(rows, [2]string{"Prepared by", names})
 	}
@@ -182,7 +314,7 @@ func (w *writer) info() {
 		rows = append(rows, [2]string{"Valid until", formatDate(a.ValidUntil)})
 	}
 	if a.Period != nil {
-		rows = append(rows, [2]string{"Engagement period", formatRange(a.Period.Start, a.Period.End)})
+		rows = append(rows, [2]string{"Engagement period", w.dateRange(a.Period.Start, a.Period.End)})
 	}
 	if a.Supersedes != nil {
 		rows = append(rows, [2]string{"Supersedes", fmt.Sprintf("`%s` version %s", a.Supersedes.ID, a.Supersedes.Version)})
@@ -206,56 +338,68 @@ func (w *writer) partyNames(role engagement.PartyRole) string {
 }
 
 func (w *writer) objectives() {
-	if len(w.a.Objectives) == 0 {
-		return
-	}
-	w.h2("Objectives")
 	for _, o := range w.a.Objectives {
 		w.p("- %s\n", labeled(o.ID, o.Title, o.Description))
 	}
 	w.p("\n")
 }
 
-func (w *writer) scope() {
-	s := w.a.Scope
-	w.h2("Scope")
-	w.para(s.Summary)
-	w.h3("In scope")
-	for _, it := range s.Included {
-		w.p("- %s\n", labeled(it.ID, it.Title, it.Description))
+func (w *writer) hypotheses() {
+	a := w.a
+	w.para("The engagement tests these working hypotheses. The evidence the work produces confirms, revises, or rejects each one.")
+	for _, h := range a.Hypotheses {
+		line := labeled(h.ID, h.Statement, h.Test)
+		if len(h.Deliverables) > 0 {
+			line += " *Evidence:* " + strings.Join(h.Deliverables, ", ") + "."
+		}
+		if m, ok := a.Milestone(h.Milestone); ok {
+			judged := m.Title
+			if m.Date != "" {
+				judged += ", " + w.date(m.Date)
+			}
+			line += " *Judged at:* " + judged + "."
+		}
+		w.p("- %s\n", line)
 	}
 	w.p("\n")
+}
+
+func (w *writer) scope() {
+	s := w.a.Scope
+	w.para(s.Summary)
+	w.h3("In scope")
+	w.included()
 	if len(s.Excluded) > 0 {
 		w.h3("Out of scope")
-		w.para("The following are not part of this engagement unless the parties agree to add them through the change process.")
-		for _, it := range s.Excluded {
-			w.p("- %s\n", labeled(it.ID, it.Title, it.Description))
-		}
-		w.p("\n")
+		w.excluded()
 	}
 }
 
-func (w *writer) approach() {
-	a := w.a
-	if strings.TrimSpace(a.Approach) == "" && len(a.Phases) == 0 {
-		return
+func (w *writer) included() {
+	for _, it := range w.a.Scope.Included {
+		w.p("- %s\n", labeled(it.ID, it.Title, it.Description))
 	}
-	w.h2("Approach")
-	w.para(a.Approach)
-	if len(a.Phases) == 0 {
-		return
+	w.p("\n")
+}
+
+func (w *writer) excluded() {
+	w.para("The following are not part of this engagement unless the parties agree to add them through the change process.")
+	for _, it := range w.a.Scope.Excluded {
+		w.p("- %s\n", labeled(it.ID, it.Title, it.Description))
 	}
-	w.h3("Phases")
+	w.p("\n")
+}
+
+func (w *writer) phases() {
 	w.p("| Phase | Dates | Goal |\n|------------|----------------------------|------------------------------------|\n")
-	for _, ph := range a.Phases {
-		w.p("| %s | %s | %s |\n", cell(ph.Title), cell(formatRange(ph.Start, ph.End)), cell(ph.Goal))
+	for _, ph := range w.a.Phases {
+		w.p("| %s | %s | %s |\n", cell(ph.Title), cell(w.dateRange(ph.Start, ph.End)), cell(ph.Goal))
 	}
 	w.p("\n")
 }
 
 func (w *writer) deliverables() {
 	a := w.a
-	w.h2("Deliverables")
 	for _, d := range a.Deliverables {
 		var meta []string
 		if d.Phase != "" {
@@ -264,7 +408,7 @@ func (w *writer) deliverables() {
 			}
 		}
 		if d.Due != "" {
-			meta = append(meta, "due "+formatDate(d.Due))
+			meta = append(meta, "due "+w.date(d.Due))
 		}
 		if owner := a.DeliverableOwner(d); owner != "" {
 			if c, ok := a.Consultant(); !ok || owner != c.ID {
@@ -296,28 +440,58 @@ func (w *writer) deliverables() {
 	}
 }
 
-func (w *writer) milestones() {
-	ms := w.a.Milestones
-	if len(ms) == 0 {
-		return
+// deliverableList writes the deliverables as a short table: ID, title, and
+// due date.
+func (w *writer) deliverableList() {
+	w.p("| ID | Deliverable | Due |\n|----|----------------------------------------|--------------------|\n")
+	for _, d := range w.a.Deliverables {
+		w.p("| %s | %s | %s |\n", d.ID, cell(d.Title), cell(w.date(d.Due)))
 	}
-	w.h2("Milestones")
-	w.p("| ID | Milestone | Date | Decision or review |\n|----|----------------|--------------------|----------------------------------|\n")
+	w.p("\n")
+}
+
+func (w *writer) milestones(ms []engagement.Milestone) {
+	kinds := false
+	for _, m := range ms {
+		if m.Kind != "" {
+			kinds = true
+			break
+		}
+	}
+	if kinds {
+		w.p("| ID | Milestone | Kind | Date | Decision or review |\n|----|----------------|------------|--------------------|----------------------------------|\n")
+	} else {
+		w.p("| ID | Milestone | Date | Decision or review |\n|----|----------------|--------------------|----------------------------------|\n")
+	}
 	for _, m := range ms {
 		title := m.Title
 		if m.Description != "" {
 			title += ": " + m.Description
 		}
-		w.p("| %s | %s | %s | %s |\n", m.ID, cell(title), cell(formatDate(m.Date)), cell(m.Decision))
+		if kinds {
+			w.p("| %s | %s | %s | %s | %s |\n", m.ID, cell(title), cell(m.Kind.Label()), cell(w.date(m.Date)), cell(m.Decision))
+			continue
+		}
+		w.p("| %s | %s | %s | %s |\n", m.ID, cell(title), cell(w.date(m.Date)), cell(m.Decision))
 	}
 	w.p("\n")
 }
 
-func (w *writer) responsibilities() {
+// responsibilities writes each party's commitments under the party's name.
+// With a role, only parties with that role are listed, and a single party
+// needs no heading of its own.
+func (w *writer) responsibilities(role string) {
 	a := w.a
-	w.h2("Responsibilities")
-	w.para("Each party commits to the following so that the work can succeed.")
+	if role == "" {
+		w.para("Each party commits to the following so that the work can succeed.")
+	}
+	var parties []engagement.Party
 	for _, party := range a.Parties {
+		if role == "" || string(party.Role) == role {
+			parties = append(parties, party)
+		}
+	}
+	for _, party := range parties {
 		var items []engagement.Responsibility
 		for _, r := range a.Responsibilities {
 			if r.Party == party.ID {
@@ -327,11 +501,13 @@ func (w *writer) responsibilities() {
 		if len(items) == 0 {
 			continue
 		}
-		w.h3(party.Name)
+		if role == "" || len(parties) > 1 {
+			w.h3(party.Name)
+		}
 		for _, r := range items {
 			line := oneLine(r.Description)
 			if r.Due != "" {
-				line = strings.TrimRight(line, ".") + " (by " + formatDate(r.Due) + ")."
+				line = strings.TrimRight(line, ".") + " (by " + w.date(r.Due) + ")."
 			}
 			w.p("- %s\n", line)
 		}
@@ -341,10 +517,6 @@ func (w *writer) responsibilities() {
 
 func (w *writer) team() {
 	a := w.a
-	if len(a.People) == 0 {
-		return
-	}
-	w.h2("Team and contacts")
 	w.p("| Name | Organization | Role |\n|------------------|------------------|----------------------------------|\n")
 	for _, party := range a.Parties {
 		for _, p := range a.People {
@@ -367,10 +539,6 @@ func (w *writer) team() {
 
 func (w *writer) governance() {
 	g := w.a.Governance
-	if g == nil {
-		return
-	}
-	w.h2("Working together")
 	w.para(g.Summary)
 	if len(g.Meetings) == 0 {
 		return
@@ -382,11 +550,23 @@ func (w *writer) governance() {
 	w.p("\n")
 }
 
-func (w *writer) assumptions() {
-	if len(w.a.Assumptions) == 0 {
-		return
+func (w *writer) contacts(cs []engagement.Contact) {
+	a := w.a
+	w.p("| Organization | Contact | Role |\n|------------------|------------------|----------------------------------|\n")
+	for _, c := range cs {
+		party, person := c.Party, c.Person
+		if p, ok := a.Party(c.Party); ok {
+			party = p.Name
+		}
+		if p, ok := a.Person(c.Person); ok {
+			person = p.Name
+		}
+		w.p("| %s | %s | %s |\n", cell(party), cell(person), cell(c.Role))
 	}
-	w.h2("Assumptions")
+	w.p("\n")
+}
+
+func (w *writer) assumptions() {
 	w.para("This plan assumes the following. If an assumption proves wrong, the parties will review its effect through the change process.")
 	for _, x := range w.a.Assumptions {
 		w.p("- %s\n", oneLine(x.Description))
@@ -396,10 +576,6 @@ func (w *writer) assumptions() {
 
 func (w *writer) risks() {
 	a := w.a
-	if len(a.Risks) == 0 {
-		return
-	}
-	w.h2("Risks")
 	w.p("| Risk | Mitigation |\n|--------------------------------|----------------------------------------|\n")
 	for _, r := range a.Risks {
 		m := r.Mitigation
@@ -414,10 +590,6 @@ func (w *writer) risks() {
 }
 
 func (w *writer) successCriteria() {
-	if len(w.a.SuccessCriteria) == 0 {
-		return
-	}
-	w.h2("Measures of success")
 	for _, c := range w.a.SuccessCriteria {
 		w.p("- %s\n", oneLine(c.Description))
 	}
@@ -426,19 +598,50 @@ func (w *writer) successCriteria() {
 
 func (w *writer) acceptance() {
 	acc := w.a.Acceptance
-	if acc == nil {
-		return
-	}
-	w.h2("Review and acceptance")
 	w.para(acc.Process)
 	if acc.ReviewDays > 0 {
 		w.para(fmt.Sprintf("The client reviews each deliverable within %d business days of receiving it.", acc.ReviewDays))
 	}
 }
 
+func (w *writer) closeout() {
+	a := w.a
+	c := a.Closeout
+	w.para(c.Summary)
+	partyName := func(id string) string {
+		if p, ok := a.Party(id); ok {
+			return p.Name
+		}
+		return id
+	}
+	by := func(due string) string {
+		if due == "" {
+			return ""
+		}
+		return ", by " + w.date(due)
+	}
+	if len(c.Evaluations) > 0 {
+		w.para("**Evaluations**")
+		for _, e := range c.Evaluations {
+			line := fmt.Sprintf("**%s.** %s evaluates %s", e.ID, partyName(e.Party), strings.TrimRight(oneLine(e.Subject), "."))
+			if e.Method != "" {
+				line += " (" + oneLine(e.Method) + ")"
+			}
+			w.p("- %s%s.\n", line, by(e.Due))
+		}
+		w.p("\n")
+	}
+	if len(c.Reports) > 0 {
+		w.para("**Reports**")
+		for _, r := range c.Reports {
+			w.p("- **%s.** %s To %s%s.\n", r.ID, strings.TrimRight(oneLine(r.Description), ".")+".", partyName(r.To), by(r.Due))
+		}
+		w.p("\n")
+	}
+}
+
 func (w *writer) commercials() {
 	c := w.a.Commercials
-	w.h2("Fees and expenses")
 	w.para("**Fee model:** " + c.Model.Label() + ".")
 	w.para(c.Summary)
 	if len(c.Fees) > 0 {
@@ -467,10 +670,6 @@ func (w *writer) commercials() {
 }
 
 func (w *writer) terms() {
-	if len(w.a.Terms) == 0 {
-		return
-	}
-	w.h2("Terms")
 	for _, t := range w.a.Terms {
 		w.h3(t.Title)
 		w.para(t.Text)
@@ -479,10 +678,6 @@ func (w *writer) terms() {
 
 func (w *writer) openQuestions() {
 	a := w.a
-	if len(a.OpenQuestions) == 0 {
-		return
-	}
-	w.h2("Open questions")
 	w.para("To settle before this agreement is signed.")
 	w.p("| ID | Question | Owner | By |\n|----|----------------------------------------|----------------|------------|\n")
 	for _, q := range a.OpenQuestions {
@@ -492,7 +687,7 @@ func (w *writer) openQuestions() {
 		} else if p, ok := a.Person(q.Owner); ok {
 			owner = p.Name
 		}
-		w.p("| %s | %s | %s | %s |\n", q.ID, cell(q.Question), cell(owner), cell(formatDate(q.Due)))
+		w.p("| %s | %s | %s | %s |\n", q.ID, cell(q.Question), cell(owner), cell(w.date(q.Due)))
 	}
 	w.p("\n")
 }
@@ -501,13 +696,8 @@ const signatureLine = `\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\
 
 const dateLine = `\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_`
 
-func (w *writer) signatures() {
+func (w *writer) signatures(sigs []engagement.Signature) {
 	a := w.a
-	if len(a.Signatures) == 0 {
-		return
-	}
-	w.pageBreak()
-	w.h2("Signatures")
 	intro := fmt.Sprintf("By signing, the parties agree to this %s, version %s.", strings.ToLower(a.Kind.Label()), a.Version)
 	if a.Kind == engagement.KindStatementOfWork {
 		intro = fmt.Sprintf("By signing, the parties agree to this Statement of Work, version %s.", a.Version)
@@ -516,7 +706,7 @@ func (w *writer) signatures() {
 	if w.digest != "" {
 		w.para("Content digest of the agreed text:\\\n`" + w.digest + "`")
 	}
-	for _, s := range a.Signatures {
+	for _, s := range sigs {
 		partyName := s.Party
 		if p, ok := a.Party(s.Party); ok {
 			partyName = p.Name
@@ -537,7 +727,7 @@ func (w *writer) signatures() {
 			lines = append(lines, "Signature: "+signatureLine)
 		}
 		lines = append(lines, "Name: "+name)
-		if title := cmp.Or(person.Title, person.Role); title != "" {
+		if title := cmp.Or(s.Capacity, person.Title, person.Role); title != "" {
 			lines = append(lines, "Title: "+title)
 		}
 		if s.SignedDate == "" {
@@ -554,6 +744,22 @@ func (w *writer) signatures() {
 		w.p("%s\n\n", strings.Join(lines, "\\\n"))
 		w.raw(`\end{minipage}`)
 	}
+}
+
+// date formats a date at the outline's precision.
+func (w *writer) date(s string) string {
+	if w.outline.DatePrecision == engagement.PrecisionMonth {
+		return formatMonth(s)
+	}
+	return formatDate(s)
+}
+
+// dateRange formats a range at the outline's precision.
+func (w *writer) dateRange(start, end string) string {
+	if w.outline.DatePrecision == engagement.PrecisionMonth {
+		return formatMonthRange(start, end)
+	}
+	return formatRange(start, end)
 }
 
 // raw writes a raw LaTeX block, which only PDF output uses.
@@ -616,6 +822,35 @@ func formatRange(start, end string) string {
 	default:
 		return ""
 	}
+}
+
+func formatMonth(s string) string {
+	t, err := time.Parse(time.DateOnly, s)
+	if err != nil {
+		return s
+	}
+	return t.Format("January 2006")
+}
+
+func formatMonthRange(start, end string) string {
+	s, errS := time.Parse(time.DateOnly, start)
+	e, errE := time.Parse(time.DateOnly, end)
+	switch {
+	case errS == nil && errE == nil && s.Year() == e.Year() && s.Month() == e.Month():
+		return s.Format("January 2006")
+	case errS == nil && errE == nil && s.Year() == e.Year():
+		return s.Format("January") + " – " + e.Format("January 2006")
+	case errS == nil && errE == nil:
+		return s.Format("January 2006") + " – " + e.Format("January 2006")
+	default:
+		return formatRange(start, end)
+	}
+}
+
+// texEscape escapes the characters TeX treats specially.
+func texEscape(s string) string {
+	r := strings.NewReplacer(`\`, `\textbackslash{}`, "&", `\&`, "%", `\%`, "$", `\$`, "#", `\#`, "_", `\_`, "{", `\{`, "}", `\}`, "~", `\textasciitilde{}`, "^", `\textasciicircum{}`)
+	return r.Replace(s)
 }
 
 func shortDigest(d string) string {

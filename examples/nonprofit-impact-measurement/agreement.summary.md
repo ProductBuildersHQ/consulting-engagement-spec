@@ -1,0 +1,97 @@
+# Impact Measurement for Riverbend Food Network
+
+*Pro bono engagement proposal*
+
+|   |   |
+|---|---|
+| **Document** | Proposal, version 1.0 (Draft) |
+| **Layout** | One-page plan |
+| **Reference** | `riverbend-impact-measurement` |
+| **Prepared by** | Northfield Volunteer Consultants |
+| **Prepared for** | Riverbend Food Network |
+| **Date** | March 2, 2026 |
+| **Valid until** | March 31, 2026 |
+| **Engagement period** | March 16 – July 31, 2026 |
+| **Content digest** | `sha256:8040771adac09d9b` |
+
+## 1. Summary
+
+Riverbend wants to show funders and its board what its network achieves, without adding
+work for its pantries. We propose a five-month engagement to choose a small set of
+measures, collect them with the tools Riverbend already uses, and hand over a simple,
+sustainable process.
+
+## 2. Objectives
+
+- **O1. Agree on what to measure.** A short list of measures that funders and the board value and that pantries can collect.
+- **O2. Collect it without new burden.** A collection process that fits inside two staff hours a week.
+- **O3. Tell the story.** A one-page impact summary that Riverbend can update each quarter.
+
+## 3. Hypotheses and assumptions
+
+### Assumptions
+
+This plan assumes the following. If an assumption proves wrong, the parties will review its effect through the change process.
+
+- Pantry sign-in sheets record a household identifier or name.
+- The Programs Manager can give about one hour a week to the project.
+
+## 4. Scope
+
+- **S1. Current-state review.** Review sign-in sheets, the distribution log, and current funder reports.
+- **S2. Measure selection.** Interviews with staff, three pantry leads, and two funders; a scored shortlist.
+- **S3. Pilot.** Run the new collection process in five pantries for eight weeks.
+- **S4. Handoff.** Written procedures and a training session for staff.
+
+## 5. Client responsibilities
+
+- Provide the sign-in sheets, distribution log, and funder reports (by March 20, 2026).
+- Name five pilot pantries and introduce the team to their leads (by April 3, 2026).
+- Review each deliverable and give one set of consolidated comments.
+
+## 6. Deliverables
+
+| ID | Deliverable | Due |
+|----|----------------------------------------|--------------------|
+| D1 | Discovery readout | April 17, 2026 |
+| D2 | Measure set | April 24, 2026 |
+| D3 | Pilot results | June 19, 2026 |
+| D4 | Impact summary template | July 17, 2026 |
+| D5 | Procedures and training | July 31, 2026 |
+
+## 7. Schedule
+
+| Phase | Dates | Goal |
+|------------|----------------------------|------------------------------------|
+| Discover | March 16 – April 24, 2026 | Learn the current state and agree on measures. |
+| Pilot | April 27 – June 19, 2026 | Run the process in five pantries. |
+| Hand off | June 22 – July 31, 2026 | Adjust, document, and train. |
+
+### Milestones
+
+| ID | Milestone | Date | Decision or review |
+|----|----------------|--------------------|----------------------------------|
+| M1 | Measure decision | April 24, 2026 | Riverbend approves the measure set. |
+| M2 | Pilot review | June 19, 2026 | Agree what to change before handoff. |
+| M3 | Final presentation | July 31, 2026 | Riverbend confirms it will keep using the process. |
+
+## 8. Signatures
+
+By signing, the parties agree to this proposal, version 1.0.
+
+Content digest of the agreed text:\
+`sha256:8040771adac09d9b9d872dead431a4ee599ece2c07d48294dba72cc59aba21a0`
+
+**For Northfield Volunteer Consultants**
+
+Signature: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\
+Name: Alex Rivera\
+Title: Project Leader\
+Date: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
+
+**For Riverbend Food Network**
+
+Signature: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\
+Name: Dana Lee\
+Title: Executive Director\
+Date: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
