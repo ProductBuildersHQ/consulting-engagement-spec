@@ -25,6 +25,10 @@ Word file built from a template. That causes three failures:
    cannot validate, compare, or revise an agreement it cannot parse. Once
    signed, the agreed deliverables and responsibilities cannot feed the
    project plan without retyping them.
+4. **Every organization has its own form.** Consulting programs, firms, and
+   clients often ask for a work plan in their own sections and order. Teams
+   then keep two documents, the full agreement and the form, and the two
+   drift apart, or they drop the detail the form has no place for.
 
 ## 2. Goals
 
@@ -39,6 +43,9 @@ Word file built from a template. That causes three failures:
   digest printed on it.
 - **G-5.** A model that later lifecycle documents (change orders, acceptance,
   closure) and planning tools can reference by ID.
+- **G-6.** One agreement that can be laid out in another organization's
+  sections and order, with a crosswalk that shows where each of its sections
+  is answered, so the full agreement is a checkable superset of the form.
 
 ## 3. Users
 
@@ -49,6 +56,7 @@ Word file built from a template. That causes three failures:
 | Volunteer and pro bono teams, such as volunteer consulting programs | A clear working agreement with a nonprofit client, without legal staff or paid tools |
 | AI agents | A format they can draft, validate, lint, and revise without a document editor |
 | Clients | A readable document that says what they get, what they must provide, and how to sign |
+| Program offices and reviewers | A work plan in the sections and order they already know, without losing the detail behind it |
 
 ## 4. Lifecycle
 
@@ -124,6 +132,32 @@ change order.
   the hash of the frozen PDF, and support cryptographic signing through an
   external service.
 
+### Alignment
+
+- **PRD-FR-601** An agreement can state working hypotheses, separately from
+  assumptions: what the engagement sets out to test, how, and where the
+  result is judged. An assumption is a condition the plan relies on; a
+  hypothesis is a claim the work tests.
+- **PRD-FR-602** A milestone can name its kind (kickoff, checkpoint, review,
+  decision, final, closeout), so the start and the end of an engagement are
+  explicit.
+- **PRD-FR-603** An agreement can describe its closeout: the evaluations each
+  party gives of the engagement, and the reports owed to a party such as a
+  sponsor, with due dates.
+- **PRD-FR-604** Governance can name each party's point of contact, and a
+  signature block can state the capacity in which the signer signs, such as
+  a board representative.
+- **PRD-FR-605** An outline, a separate document, lists sections with their
+  own headings and order, each drawn from named parts of an agreement. The
+  same agreement renders in any outline. The full layout and a one-page
+  summary are built in; others are written by the user.
+- **PRD-FR-606** A crosswalk lists, for each section of an outline, the parts
+  of the agreement that answer it and whether they have content, and lists
+  the parts the outline does not use. It can be printed on its own or
+  appended to the full agreement.
+- **PRD-FR-607** Outlines change the layout only: the content digest of an
+  agreement is the same in every outline.
+
 ### Interfaces
 
 - **PRD-FR-501** All logic lives in importable Go packages; the `cespec` CLI
@@ -140,6 +174,10 @@ change order.
 - **Not a project tracker.** The agreement states what was agreed. What is
   actually happening belongs in planning tools that reference it.
 - **No hosted service.** The module is a library and a CLI.
+- **No third-party templates.** The repository ships only its own outlines.
+  An outline that follows another organization's form is written by the
+  user and kept in the user's own repository; the format carries headings and
+  references, never another organization's wording.
 
 ## 7. Success metrics
 
@@ -151,3 +189,6 @@ change order.
 - The digest printed on a signed PDF matches `cespec digest` on the source.
 - Every lint rule has a test, and every example in the repository lints with
   zero errors.
+- An adopter's agreement renders in its program's outline, and the crosswalk
+  shows every section of that outline answered, with no second document kept
+  by hand.

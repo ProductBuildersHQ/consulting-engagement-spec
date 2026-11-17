@@ -49,17 +49,19 @@ names are camelCase; enum values are snake_case. [PRD-FR-101]
 | `summary` | no | Executive summary (Markdown) |
 | `background` | yes | Client situation and why now (Markdown) |
 | `objectives` | yes, ≥1 | What the engagement is meant to achieve |
+| `hypotheses` | no | What the engagement sets out to test, how, and where it is judged |
 | `scope` | yes | `summary`, `included` (≥1), `excluded` |
 | `approach` | no | Method (Markdown) |
 | `phases` | no | Stages of the work, with optional dates and goal |
 | `deliverables` | yes, ≥1 | Outputs, with owner, phase, due date, format, objectives served, acceptance criteria |
-| `milestones` | no | Dated checkpoints, with the decision taken and deliverables reviewed |
+| `milestones` | no | Dated checkpoints, with an optional kind, the decision taken, and deliverables reviewed |
 | `responsibilities` | yes, ≥1 | What each party commits to do, with optional due date |
-| `governance` | no | `summary` and `meetings` (title, participants, frequency, duration) |
+| `governance` | no | `summary`, `contacts` (each party's point of contact), and `meetings` (title, participants, frequency, duration) |
 | `assumptions` | no | Conditions the plan depends on |
 | `risks` | no | Risk, mitigation, owning party |
 | `successCriteria` | no | Measures of whether the engagement succeeded |
 | `acceptance` | no | Review `process` and `reviewDays` |
+| `closeout` | no | `summary`, `evaluations` each party gives, and `reports` owed to a party |
 | `commercials` | yes | `model`, `currency`, `summary`, `fees`, `expenses`, `paymentTerms` |
 | `changeControl` | no | How scope, schedule, or fees change (Markdown) |
 | `terms` | no | Titled terms, such as confidentiality or ownership (Markdown) |
@@ -76,12 +78,28 @@ names are camelCase; enum values are snake_case. [PRD-FR-101]
   party owns it.
 - **Fee:** `description`, `amount` (decimal string in major units, such as
   `"12500"` or `"12500.00"`), `due` (free text). [PRD-FR-106]
-- **Signature:** `party`, `signer` (person ID), `signedDate`, `method`
-  (`wet_ink`, `electronic`, `digital`). [PRD-FR-107]
+- **Signature:** `party`, `signer` (person ID), `capacity` (the capacity in
+  which the signer signs, such as "Board representative"; printed in place
+  of the person's title when set), `signedDate`, `method` (`wet_ink`,
+  `electronic`, `digital`). A party may have several signature blocks.
+  [PRD-FR-107, PRD-FR-604]
+- **Hypothesis:** `id`, `statement` (the claim), `test` (how the work tests
+  it, Markdown), `deliverables` (IDs of the deliverables that produce the
+  evidence), `milestone` (ID of the milestone where the result is judged).
+  [PRD-FR-601]
+- **Milestone `kind`:** one of `kickoff`, `checkpoint`, `review`,
+  `decision`, `final`, `closeout`. Optional; it labels the milestone and
+  lets an outline select by kind. [PRD-FR-602]
+- **Contact:** `party`, `person` (person ID), `role` (free text, such as
+  "Day-to-day lead"). [PRD-FR-604]
+- **Closeout:** `summary` (Markdown); `evaluations`, each with `id`, `party`
+  (who evaluates), `subject` (what is evaluated, free text), `method`, and
+  `due`; `reports`, each with `id`, `to` (party ID), `description`, and
+  `due`. [PRD-FR-603]
 
-**TRD-003** Element IDs of objectives, scope items, phases, deliverables,
-milestones, responsibilities, assumptions, risks, criteria, terms, and open
-questions match `^[A-Za-z0-9][A-Za-z0-9._-]*$`, so authors can use short
+**TRD-003** Element IDs of objectives, hypotheses, scope items, phases,
+deliverables, milestones, responsibilities, assumptions, risks, criteria,
+evaluations, reports, terms, and open questions match `^[A-Za-z0-9][A-Za-z0-9._-]*$`, so authors can use short
 labels such as `D1` or `M2`. Party and person IDs are lowercase slugs.
 [PRD-FR-104]
 
@@ -93,6 +111,11 @@ is therefore never ambiguous. [PRD-FR-104]
 renderer collapses them to one line, so multi-paragraph text belongs in
 `summary`, `background`, `approach`, `changeControl`, and `terms`.
 [PRD-FR-108]
+
+**TRD-006** The alignment fields (`hypotheses`, milestone `kind`,
+`governance.contacts`, `closeout`, signature `capacity`) are optional
+additions; `schemaVersion` stays `"0.1"`, and an agreement without them
+renders as before, since sections are numbered only when present. [PRD-FR-601 to PRD-FR-604]
 
 ## 3. Schema
 
@@ -174,6 +197,11 @@ are any. [PRD-FR-301, PRD-FR-302]
 | `no-acceptance-criteria` | warning | A deliverable has no acceptance criteria and there is no acceptance process |
 | `objective-unserved` | warning | Some deliverables link objectives, but this objective has none |
 | `no-signatures` | warning | No signature blocks |
+| `unknown-reference` | error | A hypothesis names an unknown deliverable or milestone, a contact names an unknown party or person, or a closeout evaluation or report names an unknown party |
+| `contact-party` | error | A contact's person belongs to a different party |
+| `hypothesis-untested` | warning | A hypothesis has no `test`, no deliverables, and no milestone |
+| `no-kickoff`, `no-closeout` | warning | Some milestones have a kind, but none is a kickoff, or none is a closeout |
+| `no-client-contact` | warning | Contacts are listed, but none belongs to a client party |
 
 ## 7. Rendering
 
@@ -196,23 +224,27 @@ sections, numbered in order, only when present:
 1. Summary
 2. Background
 3. Objectives
-4. Scope (In scope; Out of scope)
-5. Approach (with a Phases table)
-6. Deliverables (title, phase, due date, non-consultant owner, description,
+4. Hypotheses (statement, how it is tested, where it is judged)
+5. Scope (In scope; Out of scope)
+6. Approach (with a Phases table)
+7. Deliverables (title, phase, due date, non-consultant owner, description,
    format, "Accepted when")
-7. Milestones
-8. Responsibilities (grouped by party, in party order)
-9. Team and contacts
-10. Working together (governance and meetings)
-11. Assumptions
-12. Risks
-13. Measures of success
-14. Review and acceptance
-15. Fees and expenses (with a total when there is more than one fee)
-16. Changes to this agreement
-17. Terms
-18. Open questions
-19. Signatures
+8. Milestones (with the kind, when set)
+9. Responsibilities (grouped by party, in party order)
+10. Team and contacts
+11. Working together (points of contact, governance, and meetings)
+12. Assumptions
+13. Risks
+14. Measures of success
+15. Review and acceptance
+16. Closeout (evaluations and reports)
+17. Fees and expenses (with a total when there is more than one fee)
+18. Changes to this agreement
+19. Terms
+20. Open questions
+21. Signatures
+
+This order is the built-in `full` outline (§10).
 
 Dates print as "November 2, 2026". `--no-digest` leaves the digest out.
 
@@ -271,3 +303,68 @@ the block. Signing is recorded back into the agreement as `signedDate` and
 UETA expectations: intent to sign, consent to do business electronically,
 attribution, and record retention. These come from the signing service and
 the parties' process, not from this module.
+
+## 10. Outlines and crosswalk
+
+An outline lays an agreement out in another set of sections, headings, and
+order, such as the one-page work plan a program office or a client asks for,
+without a second document. [PRD-FR-605 to PRD-FR-607]
+
+**TRD-080** An outline is its own document kind, with its own generated
+schema (`outline.schema.json`), loaded and validated like an agreement:
+
+| Field | Required | Purpose |
+|---|---|---|
+| `schemaVersion` | yes | `"0.1"` |
+| `kind` | yes | `outline` |
+| `id` | yes | Slug |
+| `title` | yes | The outline's name, used in the crosswalk heading |
+| `numbered` | no | Number the sections (default true) |
+| `datePrecision` | no | `day` (default) or `month`, for dates in this layout |
+| `information` | no | Print the information table (default true) |
+| `sections` | yes, ≥1 | Each with `heading`, `from` (≥1 block), optional `note` (Markdown printed under the heading) |
+
+**TRD-081** `from` names blocks: the parts of an agreement the renderer can
+print. Each section of the `full` outline is a block (`summary`,
+`background`, `objectives`, `hypotheses`, `scope`, `scope.included`,
+`scope.excluded`, `approach`, `phases`, `deliverables`, `milestones`,
+`responsibilities`, `people`, `governance`, `governance.contacts`,
+`assumptions`, `risks`, `successCriteria`, `acceptance`, `closeout`,
+`commercials`, `changeControl`, `terms`, `openQuestions`, `signatures`).
+Filters narrow a block:
+
+- by party role: `responsibilities.client`, `responsibilities.consultant`,
+  `governance.contacts.client`, `signatures.client`;
+- by milestone kind: `milestones.kickoff`, `milestones.closeout`, and so on.
+
+Blocks in one section print in the order listed, under the section's
+heading, with their own headings one level down when there is more than one.
+
+**TRD-082** `render.Markdown` takes an outline as an option; without one it
+uses `full`. A second built-in, `summary`, is a one-page plan: summary,
+objectives, hypotheses and assumptions, included scope, client
+responsibilities and contacts, deliverables (titles and due dates), the
+phases and milestones as one schedule table, and signatures. The CLI takes
+`--outline full|summary|<file>`. [PRD-FR-605]
+
+**TRD-083** The content digest never depends on the outline. The footer and
+the information table name the outline when it is not `full`.
+[PRD-FR-607]
+
+**TRD-084** `lint.Outline` reports an error for an unknown block or filter
+and for a duplicate heading. Rendering an agreement in an outline warns when
+a section's blocks are all empty for that agreement.
+
+**TRD-085** `crosswalk.Build(agreement, outline)` returns, for each outline
+section in order: its heading, the blocks it draws on, the section numbers
+and titles those blocks have in the `full` layout, and whether they have
+content. It also returns the blocks of the agreement with content that the
+outline does not use. `cespec crosswalk` prints it as a Markdown table;
+`render` and `export` take `--crosswalk <outline>` to append it to the
+document as an appendix, "Correspondence with <outline title>". [PRD-FR-606]
+
+**TRD-086** The repository ships only `full`, `summary`, and fictional
+example outlines. An outline that follows another organization's form lives
+in the user's repository. Outlines hold headings, block references, and the
+user's own notes; the format has no field for imported template text.
+

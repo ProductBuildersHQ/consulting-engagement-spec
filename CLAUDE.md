@@ -35,6 +35,10 @@ Read before implementing:
 - **Examples are fictional.** Never commit a real client's agreement, people,
   or terms to this repository. Real agreements live in the adopter's own
   repository.
+- **Designed independently.** Model fields, outlines, and examples come from
+  general consulting practice. Never copy another organization's template,
+  wording, or section list into this repository; an outline that follows a
+  particular organization's form belongs in the adopter's own repository.
 - **Not legal advice.** Do not add legal language presented as a standard
   template.
 
