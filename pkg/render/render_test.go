@@ -160,28 +160,43 @@ func TestAlignmentFields(t *testing.T) {
 	}
 }
 
-// TestSummaryGolden compares the one-page plan with its committed file.
-// Refresh it with: go test ./pkg/render -update
-func TestSummaryGolden(t *testing.T) {
-	got := render(t, load(t), Options{Flavor: FlavorGFM, Outline: outline.Summary()})
-	path := testfixture.ExamplePath("nonprofit-impact-measurement", "agreement.summary.md")
-	if *update {
-		if err := os.WriteFile(path, []byte(got), 0o644); err != nil { //nolint:gosec // golden files are ordinary files
-			t.Fatal(err)
-		}
-		return
-	}
-	want, err := os.ReadFile(path) //nolint:gosec // test reads its own golden file
+// TestOutlineGolden compares the example in other layouts with the
+// committed files. Refresh them with: go test ./pkg/render -update
+func TestOutlineGolden(t *testing.T) {
+	a := load(t)
+	wp, err := engagementio.LoadOutline(testfixture.WorkPlan())
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got != string(want) {
-		t.Error("agreement.summary.md is out of date; run go test ./pkg/render -update")
+	for _, tc := range []struct {
+		file string
+		opts Options
+	}{
+		{"agreement.summary.md", Options{Flavor: FlavorGFM, Outline: outline.Summary()}},
+		{"agreement.work-plan.md", Options{Flavor: FlavorGFM, Outline: wp}},
+		{"agreement.crosswalk.md", Options{Flavor: FlavorGFM, Crosswalk: wp}},
+	} {
+		got := render(t, a, tc.opts)
+		path := testfixture.ExamplePath("nonprofit-impact-measurement", tc.file)
+		if *update {
+			if err := os.WriteFile(path, []byte(got), 0o644); err != nil { //nolint:gosec // golden files are ordinary files
+				t.Fatal(err)
+			}
+			continue
+		}
+		want, err := os.ReadFile(path) //nolint:gosec // test reads its own golden file
+		if err != nil {
+			t.Fatal(err)
+		}
+		if got != string(want) {
+			t.Errorf("%s is out of date; run go test ./pkg/render -update", tc.file)
+		}
 	}
 }
 
 func TestOutlineOptions(t *testing.T) {
 	a := load(t)
+	a.Hypotheses = nil
 	no := false
 	o := &engagement.Outline{
 		ID: "plan", Title: "Short plan", Numbered: &no, Information: &no,

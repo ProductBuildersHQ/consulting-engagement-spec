@@ -12,7 +12,7 @@
 | **Date** | March 2, 2026 |
 | **Valid until** | March 31, 2026 |
 | **Engagement period** | March 16 – July 31, 2026 |
-| **Content digest** | `sha256:8040771adac09d9b` |
+| **Content digest** | `sha256:ba4a9e8bd8893280` |
 
 ## 1. Summary
 
@@ -28,6 +28,11 @@ sustainable process.
 - **O3. Tell the story.** A one-page impact summary that Riverbend can update each quarter.
 
 ## 3. Hypotheses and assumptions
+
+The engagement tests these working hypotheses. The evidence the work produces confirms, revises, or rejects each one.
+
+- **H1. The pantries' sign-in sheets already hold enough to count households served.** Compare a month of sign-in sheets with the distribution log. *Evidence:* D1. *Judged at:* Measure decision, April 24, 2026.
+- **H2. Pantries can collect the new measures in under two staff hours a week.** Pilot pantries log the time collection takes. *Evidence:* D3. *Judged at:* Pilot review, June 19, 2026.
 
 ### Assumptions
 
@@ -48,6 +53,12 @@ This plan assumes the following. If an assumption proves wrong, the parties will
 - Provide the sign-in sheets, distribution log, and funder reports (by March 20, 2026).
 - Name five pilot pantries and introduce the team to their leads (by April 3, 2026).
 - Review each deliverable and give one set of consolidated comments.
+
+### Points of contact
+
+| Organization | Contact | Role |
+|------------------|------------------|----------------------------------|
+| Riverbend Food Network | Jordan Park | Day-to-day contact |
 
 ## 6. Deliverables
 
@@ -80,7 +91,7 @@ This plan assumes the following. If an assumption proves wrong, the parties will
 By signing, the parties agree to this proposal, version 1.0.
 
 Content digest of the agreed text:\
-`sha256:8040771adac09d9b9d872dead431a4ee599ece2c07d48294dba72cc59aba21a0`
+`sha256:ba4a9e8bd8893280ab1de1b1b8131f00e0fe229c0ba6b7d4fb844b323d56b644`
 
 **For Northfield Volunteer Consultants**
 

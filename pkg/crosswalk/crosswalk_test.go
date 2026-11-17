@@ -15,6 +15,7 @@ func TestBuild(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	a.Hypotheses = nil
 	target := &engagement.Outline{Title: "Short form", Sections: []engagement.OutlineSection{
 		{Heading: "Goal", From: []string{"summary", "objectives"}},
 		{Heading: "What the client does", From: []string{"responsibilities.client"}},

@@ -1,0 +1,32 @@
+schemaVersion: "0.1"
+kind: outline
+id: work-plan
+title: Volunteer Program Work Plan
+datePrecision: month
+sections:
+  - heading: Purpose
+    from:
+      - summary
+      - objectives
+  - heading: What we will test
+    from:
+      - hypotheses
+      - assumptions
+  - heading: The work
+    from:
+      - scope.included
+      - approach
+  - heading: What the client provides
+    from:
+      - responsibilities.client
+      - governance.contacts.client
+  - heading: What we deliver
+    from:
+      - deliverables.list
+  - heading: Timeline
+    from:
+      - phases
+      - milestones
+  - heading: Sign-off
+    from:
+      - signatures

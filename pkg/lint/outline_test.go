@@ -29,6 +29,7 @@ func TestOutlineRules(t *testing.T) {
 
 func TestLayoutEmptySection(t *testing.T) {
 	a := load(t)
+	a.Hypotheses = nil
 	o := &engagement.Outline{Sections: []engagement.OutlineSection{
 		{Heading: "Hypotheses", From: []string{"hypotheses"}},
 		{Heading: "Objectives", From: []string{"objectives"}},

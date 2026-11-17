@@ -27,7 +27,7 @@ header-includes:
 | **Date** | March 2, 2026 |
 | **Valid until** | March 31, 2026 |
 | **Engagement period** | March 16 – July 31, 2026 |
-| **Content digest** | `sha256:8040771adac09d9b` |
+| **Content digest** | `sha256:ba4a9e8bd8893280` |
 
 ## 1. Summary
 
@@ -51,7 +51,14 @@ volunteers who will not adopt complicated tools.
 - **O2. Collect it without new burden.** A collection process that fits inside two staff hours a week.
 - **O3. Tell the story.** A one-page impact summary that Riverbend can update each quarter.
 
-## 4. Scope
+## 4. Hypotheses
+
+The engagement tests these working hypotheses. The evidence the work produces confirms, revises, or rejects each one.
+
+- **H1. The pantries' sign-in sheets already hold enough to count households served.** Compare a month of sign-in sheets with the distribution log. *Evidence:* D1. *Judged at:* Measure decision, April 24, 2026.
+- **H2. Pantries can collect the new measures in under two staff hours a week.** Pilot pantries log the time collection takes. *Evidence:* D3. *Judged at:* Pilot review, June 19, 2026.
+
+## 5. Scope
 
 The engagement covers measurement design, a pilot in five pantries, and handoff.
 
@@ -70,7 +77,7 @@ The following are not part of this engagement unless the parties agree to add th
 - **X2. Ongoing data collection.** Riverbend staff and pantries collect the data; the team coaches.
 - **X3. Grant writing.** The team provides the impact summary, not grant applications.
 
-## 5. Approach
+## 6. Approach
 
 We start from the data Riverbend already has, pilot early, and adjust from what the pilot
 shows before handing over.
@@ -83,7 +90,7 @@ shows before handing over.
 | Pilot | April 27 – June 19, 2026 | Run the process in five pantries. |
 | Hand off | June 22 – July 31, 2026 | Adjust, document, and train. |
 
-## 6. Deliverables
+## 7. Deliverables
 
 **D1. Discovery readout** · Discover · due April 17, 2026\
 Findings from the data review and interviews.\
@@ -108,7 +115,7 @@ A one-page summary filled in with pilot data.
 **D5. Procedures and training** · Hand off · due July 31, 2026\
 Written procedures and one training session for staff.
 
-## 7. Milestones
+## 8. Milestones
 
 | ID | Milestone | Date | Decision or review |
 |----|----------------|--------------------|----------------------------------|
@@ -116,7 +123,7 @@ Written procedures and one training session for staff.
 | M2 | Pilot review | June 19, 2026 | Agree what to change before handoff. |
 | M3 | Final presentation | July 31, 2026 | Riverbend confirms it will keep using the process. |
 
-## 8. Responsibilities
+## 9. Responsibilities
 
 Each party commits to the following so that the work can succeed.
 
@@ -131,7 +138,7 @@ Each party commits to the following so that the work can succeed.
 - Name five pilot pantries and introduce the team to their leads (by April 3, 2026).
 - Review each deliverable and give one set of consolidated comments.
 
-## 9. Team and contacts
+## 10. Team and contacts
 
 | Name | Organization | Role |
 |------------------|------------------|----------------------------------|
@@ -140,7 +147,7 @@ Each party commits to the following so that the work can succeed.
 | Dana Lee | Riverbend Food Network | Executive Director; Sponsor and signer |
 | Jordan Park | Riverbend Food Network | Programs Manager; Day-to-day contact |
 
-## 10. Working together
+## 11. Working together
 
 The Project Leader is the single point of contact for the team; the Programs Manager is the contact for Riverbend.
 
@@ -149,32 +156,51 @@ The Project Leader is the single point of contact for the team; the Programs Man
 | Check-in | Project Leader and Programs Manager | Weekly | 30 minutes |
 | Milestone review | Both teams and the Executive Director | At each milestone | 60 minutes |
 
-## 11. Assumptions
+### Points of contact
+
+| Organization | Contact | Role |
+|------------------|------------------|----------------------------------|
+| Northfield Volunteer Consultants | Alex Rivera | Project Leader |
+| Riverbend Food Network | Jordan Park | Day-to-day contact |
+
+## 12. Assumptions
 
 This plan assumes the following. If an assumption proves wrong, the parties will review its effect through the change process.
 
 - Pantry sign-in sheets record a household identifier or name.
 - The Programs Manager can give about one hour a week to the project.
 
-## 12. Risks
+## 13. Risks
 
 | Risk | Mitigation |
 |--------------------------------|----------------------------------------|
 | Pantries do not return pilot data on time. | Choose pilot pantries with reliable leads; send a weekly reminder. (Riverbend Food Network) |
 | Funders want outcomes that take longer than five months to show. | Present the engagement as building the system and a baseline, not proving impact. (Northfield Volunteer Consultants) |
 
-## 13. Measures of success
+## 14. Measures of success
 
 - Riverbend approves a measure set of six to eight measures.
 - Staff run collection for the pilot pantries within two hours a week.
 
-## 14. Review and acceptance
+## 15. Review and acceptance
 
 The team sends each deliverable to the Programs Manager, who returns one set of consolidated comments. The team revises once; the Executive Director accepts it at the next milestone.
 
 The client reviews each deliverable within 5 business days of receiving it.
 
-## 15. Fees and expenses
+## 16. Closeout
+
+The engagement ends with an evaluation from each side.
+
+**Evaluations**
+
+- **E1.** Riverbend Food Network evaluates the engagement and the team (short written evaluation), by July 31, 2026.
+
+**Reports**
+
+- **CR1.** A summary of results and lessons for future engagements. To Northfield Volunteer Consultants, by July 31, 2026.
+
+## 17. Fees and expenses
 
 **Fee model:** Pro bono.
 
@@ -182,13 +208,13 @@ The team volunteers its time. Riverbend pays no fees.
 
 **Expenses.** None expected. Any expense needs Riverbend's written approval before it is incurred.
 
-## 16. Changes to this agreement
+## 18. Changes to this agreement
 
 Either party may propose a change to scope, schedule, or deliverables in writing. The
 Project Leader and the Executive Director agree to it by email, and the next version of
 this document records it.
 
-## 17. Terms
+## 19. Terms
 
 ### Confidentiality
 
@@ -202,7 +228,7 @@ Riverbend owns the deliverables and may use, change, and share them freely.
 
 Either party may end the engagement with two weeks' written notice.
 
-## 18. Open questions
+## 20. Open questions
 
 To settle before this agreement is signed.
 
@@ -218,12 +244,12 @@ To settle before this agreement is signed.
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
 ```
 
-## 19. Signatures
+## 21. Signatures
 
 By signing, the parties agree to this proposal, version 1.0.
 
 Content digest of the agreed text:\
-`sha256:8040771adac09d9b9d872dead431a4ee599ece2c07d48294dba72cc59aba21a0`
+`sha256:ba4a9e8bd8893280ab1de1b1b8131f00e0fe229c0ba6b7d4fb844b323d56b644`
 
 ```{=latex}
 \vspace{1em}\noindent\begin{minipage}{\linewidth}
