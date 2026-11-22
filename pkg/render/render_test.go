@@ -162,6 +162,16 @@ func TestAlignmentFields(t *testing.T) {
 
 // TestOutlineGolden compares the example in other layouts with the
 // committed files. Refresh them with: go test ./pkg/render -update
+func TestUnnamedSigner(t *testing.T) {
+	a := load(t)
+	a.Signatures = append(a.Signatures, engagement.Signature{Party: "riverbend", Capacity: "Board representative"})
+	s := render(t, a, Options{Flavor: FlavorGFM})
+	want := "**For Riverbend Food Network, Inc.**\n\nSignature: " + signatureLine + "\\\nName: " + signatureLine + "\\\nTitle: Board representative\\\nDate: " + dateLine
+	if !strings.Contains(s, want) {
+		t.Errorf("missing the unnamed signer's block %q", want)
+	}
+}
+
 func TestOutlineGolden(t *testing.T) {
 	a := load(t)
 	wp, err := engagementio.LoadOutline(testfixture.WorkPlan())
