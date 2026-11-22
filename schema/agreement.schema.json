@@ -855,8 +855,7 @@
       "additionalProperties": false,
       "type": "object",
       "required": [
-        "party",
-        "signer"
+        "party"
       ]
     },
     "Term": {

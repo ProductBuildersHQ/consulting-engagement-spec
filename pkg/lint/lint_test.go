@@ -97,6 +97,9 @@ func TestRules(t *testing.T) {
 		{RuleNoClientContact, Warning, func(a *engagement.Agreement) {
 			a.Governance.Contacts = []engagement.Contact{{Party: "northfield", Person: "alex-rivera"}}
 		}},
+		{RuleUnnamedSigner, Warning, func(a *engagement.Agreement) {
+			a.Signatures[1] = engagement.Signature{Party: "riverbend", Capacity: "Board representative"}
+		}},
 	}
 	covered := map[string]bool{}
 	for _, tt := range tests {

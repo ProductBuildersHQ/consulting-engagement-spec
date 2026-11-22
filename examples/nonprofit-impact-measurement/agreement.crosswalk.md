@@ -234,7 +234,7 @@ Name: Alex Rivera\
 Title: Project Leader\
 Date: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 
-**For Riverbend Food Network**
+**For Riverbend Food Network, Inc.**
 
 Signature: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\
 Name: Dana Lee\
