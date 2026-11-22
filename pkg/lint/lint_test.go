@@ -97,6 +97,9 @@ func TestRules(t *testing.T) {
 		{RuleNoClientContact, Warning, func(a *engagement.Agreement) {
 			a.Governance.Contacts = []engagement.Contact{{Party: "northfield", Person: "alex-rivera"}}
 		}},
+		{RuleUnnamedSigner, Warning, func(a *engagement.Agreement) {
+			a.Signatures[1] = engagement.Signature{Party: "riverbend", Capacity: "Board representative"}
+		}},
 	}
 	covered := map[string]bool{}
 	for _, tt := range tests {
@@ -117,6 +120,37 @@ func TestRules(t *testing.T) {
 		if !covered[r] {
 			t.Errorf("rule %s has no test", r)
 		}
+	}
+}
+
+func TestUnnamedSigner(t *testing.T) {
+	tests := []struct {
+		name   string
+		mutate func(a *engagement.Agreement)
+		sev    Severity
+	}{
+		{"draft", func(*engagement.Agreement) {}, Warning},
+		{"no capacity", func(a *engagement.Agreement) { a.Signatures[1].Capacity = "" }, Error},
+		{"signed", func(a *engagement.Agreement) { a.Signatures[1].SignedDate = "2026-03-01" }, Error},
+		{"agreed", func(a *engagement.Agreement) { a.Status = engagement.StatusAgreed; a.OpenQuestions = nil }, Error},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			a := load(t)
+			a.Signatures[1] = engagement.Signature{Party: "riverbend", Capacity: "Board representative"}
+			tt.mutate(a)
+			res := Agreement(a)
+			i := slices.IndexFunc(res.Findings, func(f Finding) bool { return f.Rule == RuleUnnamedSigner })
+			if i < 0 {
+				t.Fatalf("not reported; got %v", rules(res))
+			}
+			if got := res.Findings[i].Severity; got != tt.sev {
+				t.Fatalf("severity %s, want %s", got, tt.sev)
+			}
+			if slices.Contains(rules(res), RuleUnknownPerson) {
+				t.Fatal("an unnamed signer is not an unknown person")
+			}
+		})
 	}
 }
 

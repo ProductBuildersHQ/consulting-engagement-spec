@@ -4,6 +4,7 @@
 package lint
 
 import (
+	"cmp"
 	"fmt"
 	"slices"
 	"strings"
@@ -51,6 +52,7 @@ const (
 	RuleNoKickoff              = "no-kickoff"
 	RuleNoCloseout             = "no-closeout"
 	RuleNoClientContact        = "no-client-contact"
+	RuleUnnamedSigner          = "unnamed-signer"
 )
 
 // Finding is one problem.
@@ -259,6 +261,10 @@ func (l *linter) references() {
 	for i, s := range a.Signatures {
 		base := fmt.Sprintf("signatures/%d", i)
 		party(base+"/party", s.Party)
+		if s.Signer == "" {
+			l.unnamedSigner(base, s)
+			continue
+		}
 		p, ok := a.Person(s.Signer)
 		if !ok {
 			l.add(Error, RuleUnknownPerson, base+"/signer", "unknown person %q", s.Signer)
@@ -267,6 +273,22 @@ func (l *linter) references() {
 		if p.Party != s.Party {
 			l.add(Error, RuleSignerParty, base+"/signer", "%s belongs to party %q, not %q", p.Name, p.Party, s.Party)
 		}
+	}
+}
+
+// unnamedSigner checks a signature block with no signer. Naming the signer
+// can wait while the agreement is a draft, as long as the block says in what
+// capacity they sign.
+func (l *linter) unnamedSigner(base string, s engagement.Signature) {
+	switch {
+	case s.Capacity == "":
+		l.add(Error, RuleUnnamedSigner, base+"/signer", "no signer and no capacity; name the signer, or the capacity they sign in")
+	case s.SignedDate != "":
+		l.add(Error, RuleUnnamedSigner, base+"/signer", "signed, but the %s is not named", s.Capacity)
+	case l.a.Status == engagement.StatusAgreed:
+		l.add(Error, RuleUnnamedSigner, base+"/signer", "status is agreed but the %s is not named", s.Capacity)
+	default:
+		l.add(Warning, RuleUnnamedSigner, base+"/signer", "the %s is not named yet", s.Capacity)
 	}
 }
 
@@ -401,7 +423,7 @@ func (l *linter) lifecycle() {
 	}
 	for i, s := range a.Signatures {
 		if s.SignedDate == "" {
-			l.add(Warning, RuleAgreedUnsigned, fmt.Sprintf("signatures/%d", i), "status is agreed but %s has not signed", s.Signer)
+			l.add(Warning, RuleAgreedUnsigned, fmt.Sprintf("signatures/%d", i), "status is agreed but %s has not signed", cmp.Or(s.Signer, s.Capacity))
 		}
 	}
 }
@@ -495,7 +517,7 @@ func Rules() []string {
 		RuleAgreedOpenQuestions, RuleAgreedUnsigned, RuleNoExclusions, RuleNoClientResponsibility,
 		RuleNoAcceptanceCriteria, RuleObjectiveUnserved, RuleNoSignatures,
 		RuleUnknownReference, RuleContactParty, RuleHypothesisUntested,
-		RuleNoKickoff, RuleNoCloseout, RuleNoClientContact,
+		RuleNoKickoff, RuleNoCloseout, RuleNoClientContact, RuleUnnamedSigner,
 	}
 	slices.Sort(r)
 	return r

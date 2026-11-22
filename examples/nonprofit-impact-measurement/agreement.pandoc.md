@@ -278,7 +278,7 @@ Date: \_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_\_
 \vspace{1em}\noindent\begin{minipage}{\linewidth}
 ```
 
-**For Riverbend Food Network**
+**For Riverbend Food Network, Inc.**
 
 ```{=latex}
 \vspace{2.5em}

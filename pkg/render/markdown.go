@@ -709,7 +709,7 @@ func (w *writer) signatures(sigs []engagement.Signature) {
 	for _, s := range sigs {
 		partyName := s.Party
 		if p, ok := a.Party(s.Party); ok {
-			partyName = p.Name
+			partyName = cmp.Or(p.LegalName, p.Name)
 		}
 		person, _ := a.Person(s.Signer) // lint reports an unknown signer; render what is known
 		name := person.Name
@@ -725,6 +725,9 @@ func (w *writer) signatures(sigs []engagement.Signature) {
 			lines = append(lines, "Signed on "+formatDate(s.SignedDate)+method)
 		} else {
 			lines = append(lines, "Signature: "+signatureLine)
+		}
+		if s.Signer == "" {
+			name = signatureLine // a signer not yet named, filled in by hand
 		}
 		lines = append(lines, "Name: "+name)
 		if title := cmp.Or(s.Capacity, person.Title, person.Role); title != "" {

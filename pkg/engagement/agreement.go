@@ -320,8 +320,9 @@ type OpenQuestion struct {
 // signed, the record of the signing.
 type Signature struct {
 	Party string `json:"party" jsonschema:"required"`
-	// Signer is a person ID.
-	Signer string `json:"signer" jsonschema:"required"`
+	// Signer is a person ID. It may be left out when Capacity is set, for a
+	// signer not yet named; the document then prints a blank name line.
+	Signer string `json:"signer,omitempty"`
 	// Capacity is the capacity in which the signer signs, such as "Board
 	// representative". It prints in place of the person's title.
 	Capacity string `json:"capacity,omitempty"`

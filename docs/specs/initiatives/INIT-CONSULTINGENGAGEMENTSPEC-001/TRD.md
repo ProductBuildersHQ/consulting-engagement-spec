@@ -82,7 +82,8 @@ names are camelCase; enum values are snake_case. [PRD-FR-101]
   which the signer signs, such as "Board representative"; printed in place
   of the person's title when set), `signedDate`, `method` (`wet_ink`,
   `electronic`, `digital`). A party may have several signature blocks.
-  [PRD-FR-107, PRD-FR-604]
+  `signer` may be left out when `capacity` is set, for a signer not yet
+  named. [PRD-FR-107, PRD-FR-604]
 - **Hypothesis:** `id`, `statement` (the claim), `test` (how the work tests
   it, Markdown), `deliverables` (IDs of the deliverables that produce the
   evidence), `milestone` (ID of the milestone where the result is judged).
@@ -158,7 +159,8 @@ strings. Formatting canonical output again yields the same bytes.
 
 **TRD-030** `engagementio.ContentDigest` returns `sha256:<hex>` over the
 canonical JSON of the agreement with `status` cleared and each signature
-reduced to `party` and `signer` (`signedDate` and `method` cleared).
+reduced to `party`, `signer`, and `capacity` (`signedDate` and `method`
+cleared).
 [PRD-FR-403]
 
 Why: the digest identifies the agreed terms. It is the same for YAML and
@@ -181,6 +183,7 @@ are any. [PRD-FR-301, PRD-FR-302]
 | `missing-role` | error | No consultant party, or no client party |
 | `unknown-party` | error | A person, responsibility, deliverable owner, risk owner, or signature names an unknown party |
 | `unknown-person` | error | A signature's signer is not a person |
+| `unnamed-signer` | warning, or error | A signature block has no signer: an error when it has no capacity either, when it records a signing, or when status is `agreed`; otherwise a warning |
 | `signer-party` | error | The signer belongs to a different party than the signature block |
 | `unknown-phase` | error | A deliverable or milestone names an unknown phase |
 | `unknown-objective` | error | A deliverable names an unknown objective |
@@ -250,8 +253,10 @@ Dates print as "November 2, 2026". `--no-digest` leaves the digest out.
 
 **TRD-053** Signatures start on a new page. The section states the kind and
 version being agreed and the full content digest, then one block per
-signature: "For <party>", a signature line, name, title, and a date line.
-A signed block prints "Signed on <date> (<method>)" instead of the lines.
+signature: "For <party>" (the party's `legalName` when set), a signature
+line, name, title, and a date line. A block with no signer prints a blank
+name line, and its capacity as the title. A signed block prints "Signed on
+<date> (<method>)" instead of the lines.
 [PRD-FR-404]
 
 ## 8. Export
