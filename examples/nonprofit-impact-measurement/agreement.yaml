@@ -62,6 +62,19 @@ objectives:
   - id: O3
     title: Tell the story
     description: A one-page impact summary that Riverbend can update each quarter.
+hypotheses:
+  - id: H1
+    statement: The pantries' sign-in sheets already hold enough to count households served
+    test: Compare a month of sign-in sheets with the distribution log.
+    deliverables:
+      - D1
+    milestone: M1
+  - id: H2
+    statement: Pantries can collect the new measures in under two staff hours a week
+    test: Pilot pantries log the time collection takes.
+    deliverables:
+      - D3
+    milestone: M2
 scope:
   summary: The engagement covers measurement design, a pilot in five pantries, and handoff.
   included:
@@ -193,6 +206,13 @@ responsibilities:
     description: Review each deliverable and give one set of consolidated comments.
 governance:
   summary: The Project Leader is the single point of contact for the team; the Programs Manager is the contact for Riverbend.
+  contacts:
+    - party: northfield
+      person: alex-rivera
+      role: Project Leader
+    - party: riverbend
+      person: jordan-park
+      role: Day-to-day contact
   meetings:
     - title: Check-in
       participants: Project Leader and Programs Manager
@@ -224,6 +244,19 @@ successCriteria:
 acceptance:
   process: The team sends each deliverable to the Programs Manager, who returns one set of consolidated comments. The team revises once; the Executive Director accepts it at the next milestone.
   reviewDays: 5
+closeout:
+  summary: The engagement ends with an evaluation from each side.
+  evaluations:
+    - id: E1
+      party: riverbend
+      subject: the engagement and the team
+      method: short written evaluation
+      due: "2026-07-31"
+  reports:
+    - id: CR1
+      to: northfield
+      description: A summary of results and lessons for future engagements
+      due: "2026-07-31"
 commercials:
   model: pro_bono
   summary: The team volunteers its time. Riverbend pays no fees.

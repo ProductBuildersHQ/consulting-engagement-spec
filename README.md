@@ -115,12 +115,59 @@ cespec render agreement.yaml --flavor gfm -o agreement.md    # GitHub Markdown
 cespec export agreement.yaml -o agreement.docx               # needs pandoc
 cespec export agreement.yaml -o agreement.pdf                # needs pandoc and lualatex
 cespec digest agreement.yaml               # the content digest printed on the document
-cespec schema agreement                    # print the embedded JSON Schema
+cespec schema agreement                    # print the embedded JSON Schema (or: outline)
 ```
 
 `render` and `export` refuse to run while lint reports errors. Export pins the
 timestamps Pandoc and LaTeX embed to the agreement's date, so the same input
 produces the same file.
+
+## Outlines: one agreement, any form
+
+Programs, firms, and clients often ask for a work plan in their own sections
+and order. Rather than keep a second document, write an **outline**: a short
+file of headings, each pointing at parts of the agreement.
+
+```yaml
+schemaVersion: "0.1"
+kind: outline
+id: work-plan
+title: Volunteer Program Work Plan
+datePrecision: month          # print dates as "March 2026"
+sections:
+  - heading: Purpose
+    from: [summary, objectives]
+  - heading: What we will test
+    from: [hypotheses, assumptions]
+  - heading: What the client provides
+    from: [responsibilities.client, governance.contacts.client]
+  - heading: Timeline
+    from: [phases, milestones]
+  - heading: Sign-off
+    from: [signatures]
+```
+
+```bash
+cespec outline list                                     # built-in outlines and the blocks an outline can name
+cespec render agreement.yaml --outline summary          # the built-in one-page plan
+cespec export agreement.yaml --outline work-plan.outline.yaml -o work-plan.docx
+cespec crosswalk agreement.yaml work-plan.outline.yaml  # where each section is answered
+cespec export agreement.yaml --crosswalk work-plan.outline.yaml -o agreement.pdf
+```
+
+The first block a section names prints under its heading; each later block
+under its own subheading. Filters narrow a block by party role
+(`responsibilities.client`) or milestone kind (`milestones.closeout`). The
+content digest is the same in every layout, so any of them can be signed.
+
+The **crosswalk** lists each section of an outline with the sections of the
+full agreement that answer it, then what the agreement adds. Appended to the
+full agreement with `--crosswalk`, it lets a reader who knows the shorter
+form find every part of it.
+
+Write outlines for another organization's form in your own repository. This
+repository ships only the built-in outlines and the fictional example in
+[`examples/`](examples/).
 
 ## Signing
 

@@ -61,6 +61,20 @@ Turn a signed agreement into planning data (milestones and deliverables into
 a PRISM roadmap; objectives linked to impact-model outcomes), an MCP server
 for agents, and tracking in visionstudio.
 
+### Phase 5 — Alignment with other forms
+
+Programs and clients often ask for a work plan in their own form. Rather
+than keep a second document, add the generic content such forms ask for
+(hypotheses, kickoff and closeout milestones, closeout evaluations and
+reports, points of contact, signer capacity), then outlines that lay the
+same agreement out in another order, and a crosswalk that shows where each
+section is answered. Start with the model additions, since an outline can
+only point at content the agreement holds.
+
+The work is designed from general consulting practice. Outlines that follow
+a particular organization's form are written by the adopter and kept in the
+adopter's repository; none is shipped here.
+
 ## Risks
 
 | Risk | Mitigation |
@@ -69,3 +83,4 @@ for agents, and tracking in visionstudio.
 | PDF output differs across TeX installations | Pin timestamps; document the toolchain; hash the frozen PDF in Phase 2 rather than relying on cross-machine byte equality |
 | Users treat the format as legal advice | State in README and PRD that terms are the parties' own and need legal review |
 | Signing scope creeps into an e-signature platform | Phase 2 integrates an external service; identity and audit stay out of scope |
+| Another organization's template is copied into the repository | Ship only built-in and fictional outlines; outlines carry headings and block references, not imported wording; organization-specific outlines stay in the adopter's repository |

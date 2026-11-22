@@ -21,6 +21,7 @@ func run(t *testing.T, args ...string) (string, error) {
 
 func TestCommands(t *testing.T) {
 	ex := testfixture.Nonprofit()
+	wp := testfixture.WorkPlan()
 	tests := []struct {
 		args []string
 		want string
@@ -29,7 +30,15 @@ func TestCommands(t *testing.T) {
 		{[]string{"lint", ex}, "0 errors, 0 warnings"},
 		{[]string{"fmt", "--check", ex}, ""},
 		{[]string{"digest", ex}, "sha256:"},
-		{[]string{"render", "--flavor", "gfm", ex}, "## 19. Signatures"},
+		{[]string{"render", "--flavor", "gfm", ex}, ". Signatures"},
+		{[]string{"render", "--flavor", "gfm", "--outline", "summary", ex}, "## 5. Client responsibilities"},
+		{[]string{"render", "--flavor", "gfm", "--outline", wp, "--crosswalk", "summary", ex}, "## Appendix: Correspondence with One-page plan"},
+		{[]string{"crosswalk", ex, wp}, "| What we will test | §4 Hypotheses; §12 Assumptions |"},
+		{[]string{"validate", wp}, "valid"},
+		{[]string{"fmt", "--check", wp}, ""},
+		{[]string{"outline", "lint", "--agreement", ex, wp}, "0 errors, 0 warnings"},
+		{[]string{"outline", "list"}, "responsibilities (.consultant, .client, .sponsor, .partner)"},
+		{[]string{"schema", "outline"}, `"$id"`},
 		{[]string{"schema"}, "agreement"},
 		{[]string{"schema", "agreement"}, `"$id"`},
 	}

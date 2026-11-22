@@ -2,7 +2,7 @@
 
 **Initiative:** `INIT-CONSULTINGENGAGEMENTSPEC-001`
 **Repository:** `github.com/ProductBuildersHQ/consulting-engagement-spec`
-**Status:** In progress — 0 of 4 phases completed
+**Status:** In progress — 0 of 5 phases completed
 
 > RMI IDs are stable and permanent. Commits implementing an item carry its own ID as the trailer, `Refs: <RMI-ID>`. Phase status is derived from member RMIs — a phase is complete only when all its RMIs are complete. Requirements in each `Satisfies` line are defined in PRD.md and TRD.md.
 
@@ -138,3 +138,49 @@
   - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-016`
   - Satisfies: PRD G-5
   - Acceptance: an engagement's agreement and acceptance state appear in visionstudio
+
+## Phase 5 — Alignment with Other Forms
+
+**Theme:** One agreement, laid out in any organization's sections and order, with a crosswalk that shows it is a superset
+**Status:** In progress — 7 of 8 items completed
+
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-023` Hypotheses: types, schema, lint, and the Hypotheses section
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-008`
+  - Satisfies: PRD-FR-601, TRD-006, TRD-052
+  - Acceptance: a hypothesis with a test, deliverables, and a milestone renders under Hypotheses; unknown references are errors and an untested hypothesis is a warning
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-024` Milestone kinds and closeout: evaluations and reports owed to a party
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-008`
+  - Satisfies: PRD-FR-602, PRD-FR-603
+  - Acceptance: kinds print with milestones; the Closeout section lists evaluations and reports; `no-kickoff` and `no-closeout` warn only when some milestone has a kind
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-025` Points of contact and signer capacity
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-008`
+  - Satisfies: PRD-FR-604
+  - Acceptance: contacts print under Working together; a capacity prints in place of the signer's title; several signature blocks per party render and lint cleanly
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-026` Outline document kind: types, generated schema, loading, and lint
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-023`, `RMI-CONSULTINGENGAGEMENTSPEC-024`, `RMI-CONSULTINGENGAGEMENTSPEC-025`
+  - Satisfies: PRD-FR-605, TRD-080, TRD-081, TRD-084
+  - Acceptance: an outline loads from YAML or JSON, validates against its embedded schema, and lint reports unknown blocks, unknown filters, and duplicate headings
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-027` Render in an outline: built-in `full` and `summary`, block filters, and month dates
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-026`
+  - Satisfies: PRD-FR-605, PRD-FR-607, TRD-082, TRD-083
+  - Acceptance: `render` and `export` take `--outline`; `full` reproduces the default layout byte for byte; the digest is the same in every outline
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-028` Crosswalk: `cespec crosswalk` and an appendix in the rendered agreement
+  - Type: capability · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-027`
+  - Satisfies: PRD-FR-606, TRD-085
+  - Acceptance: the table lists each outline section with the full-layout sections that answer it and whether they have content, then the blocks the outline leaves out; deterministic output
+- [x] `RMI-CONSULTINGENGAGEMENTSPEC-029` Fictional example outline, golden files, and a guide to aligning with an organization's form
+  - Type: enabler · Status: completed
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-028`
+  - Satisfies: PRD G-6, TRD-086
+  - Acceptance: the example renders in its outline and crosswalk with zero lint findings; the guide explains keeping an organization's outline in the user's own repository
+- [ ] `RMI-CONSULTINGENGAGEMENTSPEC-030` Adopter check: render the first real agreement in its program's work plan layout from a private outline
+  - Type: enabler · Status: planned
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-029`
+  - Satisfies: PRD G-6
+  - Acceptance: the adopter's agreement renders in its program's layout, and the crosswalk shows every section of that layout answered

@@ -11,11 +11,13 @@ import (
 )
 
 func TestNamesAndGet(t *testing.T) {
-	if got, want := Names(), []string{Agreement}; !slices.Equal(got, want) {
+	if got, want := Names(), []string{Agreement, Outline}; !slices.Equal(got, want) {
 		t.Fatalf("Names() = %v, want %v", got, want)
 	}
-	if _, err := Compiled(Agreement); err != nil {
-		t.Fatal(err)
+	for _, n := range Names() {
+		if _, err := Compiled(n); err != nil {
+			t.Fatal(err)
+		}
 	}
 	if _, err := Get("nope"); !errors.Is(err, ErrUnknownSchema) {
 		t.Fatalf("Get(nope) error = %v", err)

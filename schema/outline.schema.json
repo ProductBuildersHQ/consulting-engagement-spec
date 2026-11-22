@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ProductBuildersHQ/consulting-engagement-spec/schema/v0/outline.schema.json",
+  "$ref": "#/$defs/Outline",
+  "$defs": {
+    "Outline": {
+      "properties": {
+        "schemaVersion": {
+          "type": "string",
+          "enum": [
+            "0.1"
+          ]
+        },
+        "kind": {
+          "type": "string",
+          "enum": [
+            "outline"
+          ]
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9-]*$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "numbered": {
+          "type": "boolean"
+        },
+        "information": {
+          "type": "boolean"
+        },
+        "datePrecision": {
+          "type": "string",
+          "enum": [
+            "day",
+            "month"
+          ]
+        },
+        "sections": {
+          "items": {
+            "$ref": "#/$defs/OutlineSection"
+          },
+          "type": "array",
+          "minItems": 1
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "schemaVersion",
+        "kind",
+        "id",
+        "title",
+        "sections"
+      ]
+    },
+    "OutlineSection": {
+      "properties": {
+        "heading": {
+          "type": "string",
+          "minLength": 1
+        },
+        "from": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "minItems": 1
+        },
+        "note": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false,
+      "type": "object",
+      "required": [
+        "heading",
+        "from"
+      ]
+    }
+  },
+  "title": "Agreement Outline",
+  "description": "A layout for consulting agreements: sections with their own headings and order, each drawn from named parts of an agreement."
+}

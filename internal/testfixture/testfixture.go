@@ -20,3 +20,8 @@ func ExamplePath(elem ...string) string {
 func Nonprofit() string {
 	return ExamplePath("nonprofit-impact-measurement", "agreement.yaml")
 }
+
+// WorkPlan is the path of the fictional example outline.
+func WorkPlan() string {
+	return ExamplePath("nonprofit-impact-measurement", "work-plan.outline.yaml")
+}

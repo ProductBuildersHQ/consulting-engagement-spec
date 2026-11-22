@@ -46,7 +46,7 @@ func ContentDigest(a *engagement.Agreement) (string, error) {
 	if len(a.Signatures) > 0 {
 		c.Signatures = make([]engagement.Signature, len(a.Signatures))
 		for i, s := range a.Signatures {
-			c.Signatures[i] = engagement.Signature{Party: s.Party, Signer: s.Signer}
+			c.Signatures[i] = engagement.Signature{Party: s.Party, Signer: s.Signer, Capacity: s.Capacity}
 		}
 	}
 	j, err := canonicalJSON(&c)
