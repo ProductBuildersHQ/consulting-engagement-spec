@@ -2,7 +2,7 @@
 
 **Initiative:** `INIT-CONSULTINGENGAGEMENTSPEC-001`
 **Repository:** `github.com/ProductBuildersHQ/consulting-engagement-spec`
-**Status:** In progress — 1 of 5 phases completed
+**Status:** In progress — 0 of 5 phases completed
 
 > RMI IDs are stable and permanent. Commits implementing an item carry its own ID as the trailer, `Refs: <RMI-ID>`. Phase status is derived from member RMIs — a phase is complete only when all its RMIs are complete. Requirements in each `Satisfies` line are defined in PRD.md and TRD.md.
 
@@ -142,7 +142,7 @@
 ## Phase 5 — Alignment with Other Forms
 
 **Theme:** One agreement, laid out in any organization's sections and order, with a crosswalk that shows it is a superset
-**Status:** Completed — 8 of 8 items completed
+**Status:** In progress — 8 of 9 items completed
 
 - [x] `RMI-CONSULTINGENGAGEMENTSPEC-023` Hypotheses: types, schema, lint, and the Hypotheses section
   - Type: capability · Status: completed
@@ -184,3 +184,8 @@
   - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-029`
   - Satisfies: PRD G-6
   - Acceptance: the adopter's agreement renders in its program's layout, and the crosswalk shows every section of that layout answered
+- [ ] `RMI-CONSULTINGENGAGEMENTSPEC-031` Signature lines by capacity: a signer to be named, and the party's legal name on each block
+  - Type: capability · Status: planned
+  - Depends on: `RMI-CONSULTINGENGAGEMENTSPEC-025`
+  - Satisfies: PRD-FR-604, TRD-053
+  - Acceptance: a block with a capacity and no signer renders a blank name line and lints as a warning in a draft and an error once agreed; a block heads with the party's legal name when set

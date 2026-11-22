@@ -146,7 +146,9 @@ change order.
   sponsor, with due dates.
 - **PRD-FR-604** Governance can name each party's point of contact, and a
   signature block can state the capacity in which the signer signs, such as
-  a board representative.
+  a board representative. A form often lists its signers by capacity before
+  everyone is named, so a block may give a capacity and leave the signer to
+  be named; the document then prints a blank name line.
 - **PRD-FR-605** An outline, a separate document, lists sections with their
   own headings and order, each drawn from named parts of an agreement. The
   same agreement renders in any outline. The full layout and a one-page
