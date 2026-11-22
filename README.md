@@ -195,6 +195,7 @@ have an attorney review terms and the signing process before relying on them.
 ## Releases
 
 - [CHANGELOG](CHANGELOG.md)
+- [v0.2.0 release notes](docs/releases/v0.2.0.md)
 - [v0.1.0 release notes](docs/releases/v0.1.0.md)
 
 ## License

@@ -9,6 +9,67 @@
   ],
   "releases": [
     {
+      "version": "v0.2.0",
+      "date": "2026-11-21",
+      "highlights": [
+        {
+          "description": "Outlines: lay one agreement out in any organization's sections and order, with the same content digest"
+        },
+        {
+          "description": "A crosswalk that shows where each section of another form is answered and what the agreement adds, as a command or an appendix"
+        },
+        {
+          "description": "Hypotheses, milestone kinds, points of contact, a closeout, and signer capacity in the agreement"
+        }
+      ],
+      "added": [
+        {
+          "description": "`pkg/engagement`: `Hypothesis`, `Milestone.Kind` (`kickoff`, `checkpoint`, `review`, `decision`, `final`, `closeout`), `Governance.Contacts`, `Closeout` with evaluations and reports, and `Signature.Capacity`, which is part of the content digest"
+        },
+        {
+          "description": "The `outline` document kind: `engagement.Outline` with sections drawn from named blocks, optional `numbered` and `information` switches, and `datePrecision: month`; a generated, embedded `outline` JSON Schema; and `engagementio.LoadOutline` and `LoadDocument`"
+        },
+        {
+          "description": "`pkg/outline`: the blocks an outline can name, party-role and milestone-kind filters, which blocks have content for an agreement, and the built-in outlines `full` and `summary`"
+        },
+        {
+          "description": "`pkg/crosswalk`: for each section of a target outline, the sections of the rendered agreement that answer it, and the sections it does not ask for, with a Markdown table"
+        },
+        {
+          "description": "`pkg/render`: `Options.Outline` and `Options.Crosswalk`; Hypotheses and Closeout sections, a milestone Kind column, points of contact, a short deliverables table, and month dates"
+        },
+        {
+          "description": "Lint rules `unknown-reference`, `contact-party`, `hypothesis-untested`, `no-kickoff`, `no-closeout`, and `no-client-contact`; outline rules `unknown-block`, `duplicate-heading`, and `empty-section`"
+        },
+        {
+          "description": "The CLI: `--outline` and `--crosswalk` on `render` and `export`, the `crosswalk` command, and `outline list` and `outline lint`; `validate` and `fmt` accept outlines"
+        }
+      ],
+      "changed": [
+        {
+          "description": "The footer and information table name the layout when it is not the full agreement; with no outline, output is unchanged"
+        }
+      ],
+      "dependencies": [
+        {
+          "description": "Update indirect dependencies"
+        }
+      ],
+      "tests": [
+        {
+          "description": "The fictional example gains hypotheses, contacts, and a closeout, with a fictional work plan outline and golden files for the one-page plan, the work plan layout, and the crosswalk appendix"
+        }
+      ],
+      "documentation": [
+        {
+          "description": "The PRD, TRD, and roadmap specify alignment with other forms (Phase 5); the README describes outlines and the crosswalk"
+        },
+        {
+          "description": "v0.2.0 release notes"
+        }
+      ]
+    },
+    {
       "version": "v0.1.0",
       "date": "2026-11-11",
       "highlights": [
